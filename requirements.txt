@@ -1,0 +1,5 @@
+requests
+ttkthemes
+reportlab>=3.6.12
+pillow>=9.0.0
+pyttsx3>=2.7

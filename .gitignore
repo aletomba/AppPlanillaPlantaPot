@@ -1,0 +1,45 @@
+## ── Entorno virtual Python ──────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env
+
+## ── Caché de bytecode ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+## ── Build de PyInstaller ────────────────────────────────────────────────────
+build/
+dist/
+*.spec
+# Excepción: mantener el .spec de configuración si querés versionarlo
+# !AppPlanilla.spec
+
+## ── Base de datos SQLite ────────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+## ── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+app.log
+
+## ── IDE / editores ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+
+## ── Sistema operativo ───────────────────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+
+## ── Archivos de distribución generados ─────────────────────────────────────
+Update.bat
+test_*.pdf
