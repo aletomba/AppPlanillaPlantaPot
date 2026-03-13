@@ -22,9 +22,25 @@ class LibroDeEntradaView:
         self._current_page = 1
         self._total_pages = 1
         self._total_count = 0
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
         self.create_widgets()
 
     def create_widgets(self):
+        # ── Buscador por rango de fechas ─────────────────────────────────────
+        self.search_frame = ttk.LabelFrame(self.frame, text="Buscar por Fecha")
+        self.search_frame.pack(fill=tk.X, padx=10, pady=(5, 2))
+        ttk.Label(self.search_frame, text="Desde:").pack(side=tk.LEFT, padx=(5, 2))
+        self.entry_desde = ttk.Entry(self.search_frame, width=12)
+        self.entry_desde.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Label(self.search_frame, text="Hasta:").pack(side=tk.LEFT, padx=(0, 2))
+        self.entry_hasta = ttk.Entry(self.search_frame, width=12)
+        self.entry_hasta.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Button(self.search_frame, text="Buscar", command=self._buscar_por_fecha).pack(side=tk.LEFT, padx=3)
+        ttk.Button(self.search_frame, text="Limpiar", command=self._limpiar_busqueda).pack(side=tk.LEFT, padx=3)
+        ttk.Label(self.search_frame, text="(YYYY-MM-DD)", foreground="gray").pack(side=tk.LEFT, padx=6)
+
         self.main_frame = ttk.Frame(self.frame)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -139,11 +155,62 @@ class LibroDeEntradaView:
 
     def _prev_page(self):
         if self._current_page > 1:
-            self.load_libros(page=self._current_page - 1)
+            if self._buscando_por_fecha:
+                self._load_por_fecha(page=self._current_page - 1)
+            else:
+                self.load_libros(page=self._current_page - 1)
 
     def _next_page(self):
         if self._current_page < self._total_pages:
-            self.load_libros(page=self._current_page + 1)
+            if self._buscando_por_fecha:
+                self._load_por_fecha(page=self._current_page + 1)
+            else:
+                self.load_libros(page=self._current_page + 1)
+
+    def _buscar_por_fecha(self):
+        desde = self.entry_desde.get().strip()
+        hasta = self.entry_hasta.get().strip()
+        if not desde or not hasta:
+            messagebox.showwarning("Aviso", "Ingrese ambas fechas (YYYY-MM-DD).")
+            return
+        try:
+            datetime.strptime(desde, "%Y-%m-%d")
+            datetime.strptime(hasta, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Error", "Formato de fecha inválido. Use YYYY-MM-DD.")
+            return
+        self._buscando_por_fecha = True
+        self._fecha_desde = desde
+        self._fecha_hasta = hasta
+        self._load_por_fecha(page=1)
+
+    def _limpiar_busqueda(self):
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
+        self.entry_desde.delete(0, tk.END)
+        self.entry_hasta.delete(0, tk.END)
+        self.load_libros(page=1)
+
+    def _load_por_fecha(self, page=1):
+        result, error = self.libro_service.get_by_fecha_rango(
+            self._fecha_desde, self._fecha_hasta, page=page, page_size=50)
+        if error:
+            self._libros_all = []
+            self.display_data([], error)
+            return
+        if isinstance(result, dict) and 'items' in result:
+            self._libros_all = result['items']
+            self._total_count = result.get('totalCount', 0)
+            self._current_page = result.get('page', 1)
+            self._total_pages = result.get('totalPages', 1)
+        else:
+            self._libros_all = result or []
+            self._total_count = len(self._libros_all)
+            self._current_page = 1
+            self._total_pages = 1
+        self.apply_cliente_filter()
+        self._update_pagination_controls()
 
     def apply_cliente_filter(self):
         selected = (self.combo_cliente_filter.get() or "Todos")
