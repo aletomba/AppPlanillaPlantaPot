@@ -25,10 +25,26 @@ class PlanillaDiariaView:
         self.parent = parent
         self.service = service
         self.frame = ttk.Frame(self.parent)
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
         self._build()
 
     def _build(self):
-        # ── Toolbar ──────────────────────────────────────────────────────────
+        # ── Buscador por rango de fechas ─────────────────────────────────
+        search_frame = ttk.LabelFrame(self.frame, text="Buscar por Fecha")
+        search_frame.pack(fill=tk.X, padx=10, pady=(5, 2))
+        ttk.Label(search_frame, text="Desde:").pack(side=tk.LEFT, padx=(5, 2))
+        self.entry_desde = ttk.Entry(search_frame, width=12)
+        self.entry_desde.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Label(search_frame, text="Hasta:").pack(side=tk.LEFT, padx=(0, 2))
+        self.entry_hasta = ttk.Entry(search_frame, width=12)
+        self.entry_hasta.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Button(search_frame, text="Buscar", command=self._buscar_por_fecha).pack(side=tk.LEFT, padx=3)
+        ttk.Button(search_frame, text="Limpiar", command=self._limpiar_busqueda).pack(side=tk.LEFT, padx=3)
+        ttk.Label(search_frame, text="(YYYY-MM-DD)", foreground="gray").pack(side=tk.LEFT, padx=6)
+
+        # ── Toolbar ────────────────────────────────────────────────────────────
         toolbar = ttk.Frame(self.frame)
         toolbar.pack(fill=tk.X, padx=10, pady=5)
 
@@ -59,10 +75,52 @@ class PlanillaDiariaView:
         self._load()
 
     def _load(self):
+        self._buscando_por_fecha = False
         self.tree.delete(*self.tree.get_children())
         planillas, error = self.service.get_planillas()
         if error:
             messagebox.showerror("Error", error)
+            return
+        for p in planillas:
+            self.tree.insert("", tk.END, iid=str(p.id),
+                             values=(p.id, p.fecha.strftime("%Y-%m-%d"),
+                                     p.operador or "", p.observaciones or ""))
+
+    def _buscar_por_fecha(self):
+        desde = self.entry_desde.get().strip()
+        hasta = self.entry_hasta.get().strip()
+        if not desde or not hasta:
+            messagebox.showwarning("Aviso", "Ingrese ambas fechas (YYYY-MM-DD).")
+            return
+        try:
+            datetime.strptime(desde, "%Y-%m-%d")
+            datetime.strptime(hasta, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Error", "Formato de fecha inválido. Use YYYY-MM-DD.")
+            return
+        self._buscando_por_fecha = True
+        self._fecha_desde = desde
+        self._fecha_hasta = hasta
+        self._load_por_rango()
+
+    def _limpiar_busqueda(self):
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
+        self.entry_desde.delete(0, tk.END)
+        self.entry_hasta.delete(0, tk.END)
+        self._load()
+
+    def _load_por_rango(self):
+        """Carga planillas en el rango de fechas almacenado en self._fecha_desde/.._hasta."""
+        result, error = self.service.get_by_fecha_rango(self._fecha_desde, self._fecha_hasta)
+        if error:
+            messagebox.showerror("Error", error)
+            return
+        planillas = result.get('items', result) if isinstance(result, dict) else (result or [])
+        self.tree.delete(*self.tree.get_children())
+        if not planillas:
+            messagebox.showinfo("Sin resultados", "No hay planillas en ese rango de fechas.")
             return
         for p in planillas:
             self.tree.insert("", tk.END, iid=str(p.id),
