@@ -72,6 +72,32 @@ class LibroDeEntradaService:
         # Se asume que el endpoint es /libroEntrada/{id}/pdf y devuelve application/pdf
         return self.data_access.get_binary(f"/libroEntrada/{libro_id}/reporte")
 
+    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=50):
+        """Busca libros de entrada entre dos fechas (formato 'YYYY-MM-DD')."""
+        data, error = self.data_access.fetch_data(
+            "/libroEntrada/por-fecha",
+            params={"desde": desde_str, "hasta": hasta_str, "page": page, "pageSize": page_size}
+        )
+        if data:
+            try:
+                items = data.get('items', data) if isinstance(data, dict) else data
+                libros = [LibroDeEntradaResponseDto.from_dict(item) for item in items]
+                if isinstance(data, dict) and 'totalCount' in data:
+                    return {
+                        'items': libros,
+                        'totalCount': data.get('totalCount', len(libros)),
+                        'page': data.get('page', 1),
+                        'pageSize': data.get('pageSize', 50),
+                        'totalPages': data.get('totalPages', 1),
+                        'hasNextPage': data.get('hasNextPage', False),
+                        'hasPreviousPage': data.get('hasPreviousPage', False)
+                    }, None
+                return libros, None
+            except Exception as e:
+                logger.error("Error al procesar búsqueda por fecha: %s", e)
+                return [], f"Error al procesar datos: {e}"
+        return [], error
+
     def get_clientes(self):
         """Obtiene la lista de clientes disponibles."""
         data, error = self.data_access.fetch_data("/cliente")
