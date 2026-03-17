@@ -1,0 +1,49 @@
+# Copilot Instructions — LaboratorioAgua (Python Front)
+
+## Estructura de módulos
+Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
+- `cliente/` — ABM de clientes
+- `libro_entrada/` — Libro de entradas de muestras
+- `libro_fisico/` — Análisis físico-químico
+- `libro_bacteriologia/` — Análisis bacteriológico
+- `planilla_diaria/` — Planilla diaria de ensayos
+- `data/` — `api_data_acces.py` (cliente HTTP hacia la API)
+- `shared/` — Clase base `base_analisis_view.py`, `GenericReport.py`
+- `presentation/` — `app.py`, navegación principal Tkinter
+
+## Convenciones
+- UI con **Tkinter + ttk**
+- Cada `view.py` hereda de la vista base o implementa patrón similar
+- Los `service.py` llaman a `api_data_acces.py` que apunta a `http://localhost:5261`
+- Fechas en queries: formato `yyyy-MM-dd`
+- Vistas con buscador tienen: `entry_desde`, `entry_hasta`, `_buscar_por_fecha()`, `_limpiar_busqueda()`
+- Paginación manejada en cada vista con `_prev_page()` / `_next_page()` y flag `_buscando_por_fecha`
+
+## Carpetas
+- **Fuente**: `C:\Users\tomba\OneDrive\Escritorio\AppPlanillaPlantaPot\`
+- **Producción**: `C:\Users\tomba\OneDrive\Escritorio\LaboratorioAgua_NEW\`
+- El sistema completo se lanza con `LaboratorioAgua_NEW\START.bat`
+
+## Git Flow
+1. Crear rama `feat/nombre-feature` desde `develop`
+2. Commit + push
+3. Merge `feat` → `develop`
+4. Merge `develop` → `main`
+5. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`
+
+## Deploy Python (copiar a producción)
+```powershell
+$src = "C:\Users\tomba\OneDrive\Escritorio\AppPlanillaPlantaPot"
+$dst = "C:\Users\tomba\OneDrive\Escritorio\LaboratorioAgua_NEW"
+
+xcopy /E /Y "$src\presentation"        "$dst\presentation\"
+xcopy /E /Y "$src\cliente"             "$dst\cliente\"
+xcopy /E /Y "$src\libro_entrada"       "$dst\libro_entrada\"
+xcopy /E /Y "$src\libro_fisico"        "$dst\libro_fisico\"
+xcopy /E /Y "$src\libro_bacteriologia" "$dst\libro_bacteriologia\"
+xcopy /E /Y "$src\shared"              "$dst\shared\"
+xcopy /E /Y "$src\data"                "$dst\data\"
+xcopy /E /Y "$src\planilla_diaria"     "$dst\planilla_diaria\"
+Copy-Item "$src\main.py" "$dst\main.py" -Force
+```
+> También se puede correr `Update.bat` desde la carpeta fuente.
