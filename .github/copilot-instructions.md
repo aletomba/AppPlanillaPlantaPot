@@ -26,10 +26,12 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 
 ## Git Flow
 1. Crear rama `feat/nombre-feature` desde `develop`
-2. Commit + push
-3. Merge `feat` → `develop`
-4. Merge `develop` → `main`
+2. Commit + push de la rama feat
+3. Usar **GitHub MCP** para crear PR `feat` → `develop`, mergearlo y borrar la rama feat
+4. Usar **GitHub MCP** para crear PR `develop` → `main` y mergearlo
 5. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`
+
+> El token del MCP está configurado en `settings.json` local (nunca en este archivo).
 
 ## Deploy Python (copiar a producción)
 ```powershell
