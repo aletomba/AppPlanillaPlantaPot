@@ -25,8 +25,8 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 - El sistema completo se lanza con `LaboratorioAgua_NEW\START.bat`
 
 ## Git Flow
-1. Crear rama `feat/nombre-feature` desde `develop`
-2. Commit + push de la rama feat
+1. Usar **GitHub MCP** para crear rama `feat/nombre-feature` desde `develop`
+2. Commit + push de la rama feat (vía terminal/git local)
 3. Usar **GitHub MCP** para crear PR `feat` → `develop`, mergearlo y borrar la rama feat
 4. Usar **GitHub MCP** para crear PR `develop` → `main` y mergearlo
 5. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`

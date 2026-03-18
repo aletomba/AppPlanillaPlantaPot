@@ -43,3 +43,5 @@ desktop.ini
 ## ── Archivos de distribución generados ─────────────────────────────────────
 Update.bat
 test_*.pdf
+
+.vscode/
