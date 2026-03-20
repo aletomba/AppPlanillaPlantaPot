@@ -103,7 +103,7 @@ class MuestraResponseDto:
         libro_entrada_id: int = 0
     ):
         self.id = id
-        self.procedencia = procedencia
+        self.procedencia = sitio_extraccion
         self.sitio_extraccion = sitio_extraccion
         self.nombre_muestreador = nombre_muestreador
         self.latitud = latitud
@@ -123,7 +123,7 @@ class MuestraResponseDto:
             tipo_muestra = TipoDeMuestraDto.from_string(tipo_muestra_raw) if isinstance(tipo_muestra_raw, str) else int(tipo_muestra_raw)
             return MuestraResponseDto(
                 id=data.get("id", 0),
-                procedencia=data.get("procedencia", ""),
+                procedencia=data.get("sitioExtraccion", ""),
                 nombre_muestreador=data.get("nombreMuestreador", ""),
                 sitio_extraccion=data.get("sitioExtraccion", ""),
                 latitud=data.get("latitud", 0.0),
