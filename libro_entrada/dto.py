@@ -123,9 +123,9 @@ class MuestraResponseDto:
             tipo_muestra = TipoDeMuestraDto.from_string(tipo_muestra_raw) if isinstance(tipo_muestra_raw, str) else int(tipo_muestra_raw)
             return MuestraResponseDto(
                 id=data.get("id", 0),
-                procedencia=data.get("sitioExtraccion", ""),
+                procedencia=data.get("procedencia", ""),
                 nombre_muestreador=data.get("nombreMuestreador", ""),
-                sitio_extraccion=data.get("sitioExtraccion", ""),
+                sitio_extraccion=data.get("procedencia", ""),
                 latitud=data.get("latitud", 0.0),
                 longitud=data.get("longitud", 0.0),
                 fecha_extraccion=datetime.fromisoformat(data["fechaExtraccion"].replace("Z", "+00:00")) if data.get("fechaExtraccion") else datetime.now(),
