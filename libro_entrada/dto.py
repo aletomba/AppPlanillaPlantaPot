@@ -49,7 +49,7 @@ class MuestraDto:
         result = {
             "clienteId": self.cliente_id,
             "sitioExtraccion": self.sitio_extraccion,
-            "procedencia": self.procedencia,
+            "procedencia": self.sitio_extraccion,
             "nombreMuestreador": self.nombre_muestreador,
             "latitud": self.latitud,
             "longitud": self.longitud,
