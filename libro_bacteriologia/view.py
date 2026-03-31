@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import ttk
 from datetime import datetime
 from libro_bacteriologia.dto import BacteriologiaDto
 from libro_bacteriologia.report.bacteriologia_report import BacteriologiaReport
@@ -11,15 +13,57 @@ class BacteriologiaView(AnalisisViewBase):
 
     def __init__(self, parent, bq_service, libro_service=None):
         self.bq_service = bq_service
+        self._clientes = []
         super().__init__(parent, bq_service, libro_service)
+
+    # ------------------------------------------------------------------ #
+    # Widgets                                                              #
+    # ------------------------------------------------------------------ #
+
+    def create_widgets(self):
+        super().create_widgets()
+        if self.libro_service:
+            clientes, _ = self.libro_service.get_clientes()
+            self._clientes = clientes or []
+        self._build_search_and_pagination(clientes=self._clientes if self._clientes else None)
 
     # ------------------------------------------------------------------ #
     # Implementación de métodos abstractos                                #
     # ------------------------------------------------------------------ #
 
-    def load_data(self):
-        items, error = self.bq_service.get_bacteriologias()
-        self.display_data(items, error)
+    def load_data(self, page=1):
+        result, error = self.bq_service.get_bacteriologias(page=page)
+        if error or result is None:
+            self.display_data([], error)
+            return
+        items = result.get("items", [])
+        self._set_pagination_state(result, page)
+        self.display_data(items, None)
+
+    def _load_por_fecha(self, page=1):
+        result, error = self.bq_service.get_by_fecha_rango(
+            self._fecha_desde, self._fecha_hasta, page=page)
+        if error or result is None:
+            self.display_data([], error)
+            return
+        items = result.get("items", [])
+        self._set_pagination_state(result, page)
+        self.display_data(items, None)
+
+    def _apply_cliente_filter(self):
+        sel = self.combo_cliente_filter.get()
+        cliente_id = self._cliente_filter_map.get(sel)
+        if cliente_id is None:
+            self._buscando_por_fecha = False
+            self.load_data(page=1)
+        else:
+            result, error = self.bq_service.get_by_cliente(cliente_id, page=1)
+            if error or result is None:
+                self.display_data([], error)
+                return
+            items = result.get("items", [])
+            self._set_pagination_state(result, 1)
+            self.display_data(items, None)
 
     def get_columns_headers(self):
         columns = [
