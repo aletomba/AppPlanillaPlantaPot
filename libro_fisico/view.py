@@ -1,4 +1,6 @@
-﻿from libro_fisico.dto import FisicoQuimicoDto
+﻿import tkinter as tk
+from tkinter import ttk
+from libro_fisico.dto import FisicoQuimicoDto
 from libro_fisico.report.fisico_quimico_report import FisicoQuimicoReport
 from shared.base_analisis_view import AnalisisViewBase
 
@@ -10,15 +12,60 @@ class FisicoQuimicoView(AnalisisViewBase):
 
     def __init__(self, parent, fq_service, libro_service=None):
         self.fq_service = fq_service
+        self._clientes = []
         super().__init__(parent, fq_service, libro_service)
+
+    # ------------------------------------------------------------------ #
+    # Widgets                                                              #
+    # ------------------------------------------------------------------ #
+
+    def create_widgets(self):
+        # Construir treeview, botones base
+        super().create_widgets()
+        # Cargar clientes para el filtro
+        if self.libro_service:
+            clientes, _ = self.libro_service.get_clientes()
+            self._clientes = clientes or []
+        # Agregar buscador + paginación encima del treeview
+        self._build_search_and_pagination(clientes=self._clientes if self._clientes else None)
 
     # ------------------------------------------------------------------ #
     # Implementación de métodos abstractos                                #
     # ------------------------------------------------------------------ #
 
-    def load_data(self):
-        items, error = self.fq_service.get_fisicoquimicos()
-        self.display_data(items, error)
+    def load_data(self, page=1):
+        result, error = self.fq_service.get_fisicoquimicos(page=page)
+        if error or result is None:
+            self.display_data([], error)
+            return
+        items = result.get("items", [])
+        self._set_pagination_state(result, page)
+        self.display_data(items, None)
+
+    def _load_por_fecha(self, page=1):
+        result, error = self.fq_service.get_by_fecha_rango(
+            self._fecha_desde, self._fecha_hasta, page=page)
+        if error or result is None:
+            self.display_data([], error)
+            return
+        items = result.get("items", [])
+        self._set_pagination_state(result, page)
+        self.display_data(items, None)
+
+    def _apply_cliente_filter(self):
+        sel = self.combo_cliente_filter.get()
+        cliente_id = self._cliente_filter_map.get(sel)
+        if cliente_id is None:
+            self._buscando_por_fecha = False
+            self.load_data(page=1)
+        else:
+            result, error = self.fq_service.get_by_cliente(cliente_id, page=1)
+            if error or result is None:
+                self.display_data([], error)
+                return
+            items = result.get("items", [])
+            self._set_pagination_state(result, 1)
+            self.display_data(items, None)
 
     def get_columns_headers(self):
         columns = [
