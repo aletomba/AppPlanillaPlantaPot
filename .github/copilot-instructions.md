@@ -12,6 +12,7 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 - `presentation/` — `app.py`, navegación principal Tkinter
 
 ## Convenciones
+- Antes de implementar código con dependencias externas, consultar **Context7 MCP** para obtener documentación actualizada de la librería (Tkinter, requests, reportlab, etc.).
 - UI con **Tkinter + ttk**
 - Cada `view.py` hereda de la vista base o implementa patrón similar
 - Los `service.py` llaman a `api_data_acces.py` que apunta a `http://localhost:5261`
@@ -25,11 +26,13 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 - El sistema completo se lanza con `LaboratorioAgua_NEW\START.bat`
 
 ## Git Flow
+Todo el flujo se ejecuta con **GitHub MCP** (`mcp_github_*`). Respetar este orden siempre:
 1. Usar **GitHub MCP** para crear rama `feat/nombre-feature` desde `develop`
 2. Commit + push de la rama feat (vía terminal/git local)
 3. Usar **GitHub MCP** para crear PR `feat` → `develop`, mergearlo y borrar la rama feat
 4. Usar **GitHub MCP** para crear PR `develop` → `main` y mergearlo
 5. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`
+6. **Al finalizar el flujo completo, siempre hacer `git checkout develop` para dejar el repo posicionado en `develop`.**
 
 > El token del MCP está configurado en `settings.json` local (nunca en este archivo).
 
