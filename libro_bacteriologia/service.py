@@ -11,16 +11,72 @@ class BacteriologiaService:
         self.base_url = new_url.rstrip("/")
         self.data_access.base_url = self.base_url
 
-    def get_bacteriologias(self):
-        data, error = self.data_access.fetch_data("/Bacteriologico")
+    def get_bacteriologias(self, page=1, page_size=50):
+        data, error = self.data_access.fetch_data(
+            "/Bacteriologico", params={"page": page, "pageSize": page_size}
+        )
         if data:
             try:
-                # Extraer items si es respuesta paginada o envuelta
-                items = data.get('items', data) if isinstance(data, dict) else data
-                return [BacteriologiaDto.from_dict(item) for item in items], None
+                if isinstance(data, dict) and "items" in data:
+                    items = [BacteriologiaDto.from_dict(item) for item in data["items"]]
+                    return {
+                        "items": items,
+                        "totalCount": data.get("totalCount", len(items)),
+                        "page": data.get("page", page),
+                        "pageSize": data.get("pageSize", page_size),
+                        "totalPages": data.get("totalPages", 1),
+                        "hasNextPage": data.get("hasNextPage", False),
+                        "hasPreviousPage": data.get("hasPreviousPage", False),
+                    }, None
+                items = data if isinstance(data, list) else []
+                return {"items": [BacteriologiaDto.from_dict(i) for i in items], "totalCount": len(items), "page": 1, "pageSize": page_size, "totalPages": 1, "hasNextPage": False, "hasPreviousPage": False}, None
             except Exception as e:
-                return [], f"Error al procesar datos: {e}"
-        return [], error
+                return None, f"Error al procesar datos: {e}"
+        return None, error
+
+    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=50):
+        data, error = self.data_access.fetch_data(
+            "/Bacteriologico/por-fecha",
+            params={"desde": desde_str, "hasta": hasta_str, "page": page, "pageSize": page_size}
+        )
+        if data:
+            try:
+                if isinstance(data, dict) and "items" in data:
+                    items = [BacteriologiaDto.from_dict(item) for item in data["items"]]
+                    return {
+                        "items": items,
+                        "totalCount": data.get("totalCount", len(items)),
+                        "page": data.get("page", page),
+                        "pageSize": data.get("pageSize", page_size),
+                        "totalPages": data.get("totalPages", 1),
+                        "hasNextPage": data.get("hasNextPage", False),
+                        "hasPreviousPage": data.get("hasPreviousPage", False),
+                    }, None
+            except Exception as e:
+                return None, f"Error al procesar datos: {e}"
+        return None, error
+
+    def get_by_cliente(self, cliente_id, page=1, page_size=50):
+        data, error = self.data_access.fetch_data(
+            f"/Bacteriologico/por-cliente/{cliente_id}",
+            params={"page": page, "pageSize": page_size}
+        )
+        if data:
+            try:
+                if isinstance(data, dict) and "items" in data:
+                    items = [BacteriologiaDto.from_dict(item) for item in data["items"]]
+                    return {
+                        "items": items,
+                        "totalCount": data.get("totalCount", len(items)),
+                        "page": data.get("page", page),
+                        "pageSize": data.get("pageSize", page_size),
+                        "totalPages": data.get("totalPages", 1),
+                        "hasNextPage": data.get("hasNextPage", False),
+                        "hasPreviousPage": data.get("hasPreviousPage", False),
+                    }, None
+            except Exception as e:
+                return None, f"Error al procesar datos: {e}"
+        return None, error
 
     def create_bacteriologia(self, bq_dto):
         return self.data_access.post_data("/Bacteriologico", bq_dto.to_dict())

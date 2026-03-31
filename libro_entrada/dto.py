@@ -103,7 +103,7 @@ class MuestraResponseDto:
         libro_entrada_id: int = 0
     ):
         self.id = id
-        self.procedencia = procedencia
+        self.procedencia = sitio_extraccion
         self.sitio_extraccion = sitio_extraccion
         self.nombre_muestreador = nombre_muestreador
         self.latitud = latitud
@@ -125,7 +125,7 @@ class MuestraResponseDto:
                 id=data.get("id", 0),
                 procedencia=data.get("procedencia", ""),
                 nombre_muestreador=data.get("nombreMuestreador", ""),
-                sitio_extraccion=data.get("sitioExtraccion", ""),
+                sitio_extraccion=data.get("procedencia", ""),
                 latitud=data.get("latitud", 0.0),
                 longitud=data.get("longitud", 0.0),
                 fecha_extraccion=datetime.fromisoformat(data["fechaExtraccion"].replace("Z", "+00:00")) if data.get("fechaExtraccion") else datetime.now(),

@@ -25,6 +25,13 @@ class AnalisisViewBase(ABC):
         self.libro_service = libro_service
         self.frame = ttk.Frame(self.parent)
         self.muestras_temp = []
+        # Estado de paginación y búsqueda (usado por subclases que lo activen)
+        self._current_page = 1
+        self._total_pages = 1
+        self._total_count = 0
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
         self.create_widgets()
 
     # ------------------------------------------------------------------ #
@@ -55,6 +62,122 @@ class AnalisisViewBase(ABC):
         ttk.Button(self.btn_frame, text="Eliminar Libro", command=self.delete_selected).pack(side=tk.LEFT, padx=5)
 
         self.load_data()
+
+    def _build_search_and_pagination(self, clientes=None):
+        """Agrega barra de búsqueda por fecha + filtro cliente (opcional) + paginación.
+        Llamar desde create_widgets() de la subclase ANTES de load_data()."""
+
+        # ── Buscador por rango de fechas ─────────────────────────────────
+        search_frame = ttk.LabelFrame(self.frame, text="Buscar por Fecha")
+        # Insertar ARRIBA del main_frame
+        search_frame.pack(fill=tk.X, padx=10, pady=(5, 2), before=self.main_frame)
+
+        ttk.Label(search_frame, text="Desde:").pack(side=tk.LEFT, padx=(5, 2))
+        self.entry_desde = ttk.Entry(search_frame, width=12)
+        self.entry_desde.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Label(search_frame, text="Hasta:").pack(side=tk.LEFT, padx=(0, 2))
+        self.entry_hasta = ttk.Entry(search_frame, width=12)
+        self.entry_hasta.pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Button(search_frame, text="Buscar", command=self._buscar_por_fecha).pack(side=tk.LEFT, padx=3)
+        ttk.Button(search_frame, text="Limpiar", command=self._limpiar_busqueda).pack(side=tk.LEFT, padx=3)
+        ttk.Label(search_frame, text="(YYYY-MM-DD)", foreground="gray").pack(side=tk.LEFT, padx=6)
+
+        # ── Filtro por cliente (opcional) ────────────────────────────────
+        self._cliente_filter_map = {"Todos": None}
+        if clientes is not None:
+            ttk.Label(search_frame, text="  Cliente:").pack(side=tk.LEFT, padx=(8, 2))
+            self.combo_cliente_filter = ttk.Combobox(search_frame, state="readonly", width=20)
+            self.combo_cliente_filter.pack(side=tk.LEFT, padx=(0, 5))
+            self._load_cliente_filter(clientes)
+            self.combo_cliente_filter.bind("<<ComboboxSelected>>", lambda _e: self._apply_cliente_filter())
+
+        # ── Paginación ─────────────────────────────────────────────────
+        pagination_frame = ttk.Frame(self.frame)
+        pagination_frame.pack(fill=tk.X, padx=10, pady=(0, 5))
+
+        self.btn_prev = ttk.Button(pagination_frame, text="◀ Anterior", command=self._prev_page)
+        self.btn_prev.pack(side=tk.LEFT, padx=5)
+
+        self.lbl_page = ttk.Label(pagination_frame, text="Página 1 de 1")
+        self.lbl_page.pack(side=tk.LEFT, padx=10)
+
+        self.btn_next = ttk.Button(pagination_frame, text="Siguiente ▶", command=self._next_page)
+        self.btn_next.pack(side=tk.LEFT, padx=5)
+
+        self.lbl_total = ttk.Label(pagination_frame, text="")
+        self.lbl_total.pack(side=tk.LEFT, padx=15)
+
+    def _load_cliente_filter(self, clientes):
+        values = ["Todos"]
+        mapping = {"Todos": None}
+        for c in clientes:
+            label = f"{c.nombre} (ID: {c.id})"
+            values.append(label)
+            mapping[label] = c.id
+        self._cliente_filter_map = mapping
+        self.combo_cliente_filter["values"] = values
+        self.combo_cliente_filter.set("Todos")
+
+    def _apply_cliente_filter(self):
+        """Subclases pueden sobrescribir para filtrar por cliente."""
+        pass
+
+    def _update_pagination_controls(self):
+        if hasattr(self, "lbl_page"):
+            self.lbl_page.config(text=f"Página {self._current_page} de {self._total_pages}")
+            self.lbl_total.config(text=f"Total: {self._total_count} registros")
+            self.btn_prev.config(state=tk.NORMAL if self._current_page > 1 else tk.DISABLED)
+            self.btn_next.config(state=tk.NORMAL if self._current_page < self._total_pages else tk.DISABLED)
+
+    def _prev_page(self):
+        if self._current_page > 1:
+            if self._buscando_por_fecha:
+                self._load_por_fecha(page=self._current_page - 1)
+            else:
+                self.load_data(page=self._current_page - 1)
+
+    def _next_page(self):
+        if self._current_page < self._total_pages:
+            if self._buscando_por_fecha:
+                self._load_por_fecha(page=self._current_page + 1)
+            else:
+                self.load_data(page=self._current_page + 1)
+
+    def _buscar_por_fecha(self):
+        desde = self.entry_desde.get().strip()
+        hasta = self.entry_hasta.get().strip()
+        if not desde or not hasta:
+            messagebox.showwarning("Aviso", "Ingrese ambas fechas (YYYY-MM-DD).")
+            return
+        try:
+            datetime.strptime(desde, "%Y-%m-%d")
+            datetime.strptime(hasta, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Error", "Formato de fecha inválido. Use YYYY-MM-DD.")
+            return
+        self._buscando_por_fecha = True
+        self._fecha_desde = desde
+        self._fecha_hasta = hasta
+        self._load_por_fecha(page=1)
+
+    def _limpiar_busqueda(self):
+        self._buscando_por_fecha = False
+        self._fecha_desde = None
+        self._fecha_hasta = None
+        self.entry_desde.delete(0, tk.END)
+        self.entry_hasta.delete(0, tk.END)
+        self.load_data(page=1)
+
+    def _load_por_fecha(self, page=1):
+        """Subclases que usan búsqueda por fecha deben sobrescribir este método."""
+        pass
+
+    def _set_pagination_state(self, response_dict, page):
+        """Extrae el estado de paginación de una respuesta paginada."""
+        self._total_count = response_dict.get("totalCount", 0)
+        self._current_page = response_dict.get("page", page)
+        self._total_pages = response_dict.get("totalPages", 1)
+        self._update_pagination_controls()
 
     # ------------------------------------------------------------------ #
     # Carga y visualización de datos                                      #
