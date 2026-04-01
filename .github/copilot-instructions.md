@@ -11,6 +11,13 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 - `shared/` — Clase base `base_analisis_view.py`, `GenericReport.py`
 - `presentation/` — `app.py`, navegación principal Tkinter
 
+## Ejecución
+```powershell
+cd "C:\Users\tomba\OneDrive\Escritorio\AppPlanillaPlantaPot"
+.venv\Scripts\Activate.ps1   # activar entorno virtual
+python main.py              # lanzar aplicación
+```
+
 ## Convenciones
 - Antes de implementar código con dependencias externas, consultar **Context7 MCP** para obtener documentación actualizada de la librería (Tkinter, requests, reportlab, etc.).
 - UI con **Tkinter + ttk**
@@ -29,10 +36,12 @@ Cada módulo de dominio tiene: `dto.py`, `service.py`, `view.py`
 Todo el flujo se ejecuta con **GitHub MCP** (`mcp_github_*`). Respetar este orden siempre:
 1. Usar **GitHub MCP** para crear rama `feat/nombre-feature` desde `develop`
 2. Commit + push de la rama feat (vía terminal/git local)
-3. Usar **GitHub MCP** para crear PR `feat` → `develop`, mergearlo y borrar la rama feat
-4. Usar **GitHub MCP** para crear PR `develop` → `main` y mergearlo
-5. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`
-6. **Al finalizar el flujo completo, siempre hacer `git checkout develop` para dejar el repo posicionado en `develop`.**
+3. Invocar el agente **Code Reviewer** (`@Code Reviewer revisá los cambios de esta rama antes del PR`) y aplicar las mejoras sugeridas
+4. Usar **GitHub MCP** para crear PR `feat` → `develop`, mergearlo y borrar la rama feat
+5. Usar **GitHub MCP** para crear PR `develop` → `main` y mergearlo
+6. Repos GitHub: `aletomba/AppPlanillaPlantaPot` y `aletomba/ApiLaboratorioAgua`
+7. **Al finalizar el flujo completo, siempre hacer `git checkout develop` para dejar el repo posicionado en `develop`.**
+8. **Cerrar en GitHub las issues resueltas al terminar cada feature/fix.**
 
 > El token del MCP está configurado en `settings.json` local (nunca en este archivo).
 

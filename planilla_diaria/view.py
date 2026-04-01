@@ -28,6 +28,9 @@ class PlanillaDiariaView:
         self._buscando_por_fecha = False
         self._fecha_desde = None
         self._fecha_hasta = None
+        self._current_page = 1
+        self._total_pages = 1
+        self._total_count = 0
         self._build()
 
     def _build(self):
@@ -72,15 +75,32 @@ class PlanillaDiariaView:
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         vsb.pack(side=tk.RIGHT, fill=tk.Y)
 
+        # ── Paginación ────────────────────────────────────────────────────
+        pag_frame = ttk.Frame(self.frame)
+        pag_frame.pack(fill=tk.X, padx=10, pady=(2, 5))
+        self.btn_prev = ttk.Button(pag_frame, text="◀", width=3, command=self._prev_page)
+        self.btn_prev.pack(side=tk.LEFT, padx=2)
+        self.lbl_page = ttk.Label(pag_frame, text="Página 1 de 1")
+        self.lbl_page.pack(side=tk.LEFT, padx=6)
+        self.btn_next = ttk.Button(pag_frame, text="▶", width=3, command=self._next_page)
+        self.btn_next.pack(side=tk.LEFT, padx=2)
+        self.lbl_total = ttk.Label(pag_frame, text="", foreground="gray")
+        self.lbl_total.pack(side=tk.LEFT, padx=10)
+
         self._load()
 
-    def _load(self):
+    def _load(self, page: int = 1):
         self._buscando_por_fecha = False
+        self._current_page = page
         self.tree.delete(*self.tree.get_children())
-        planillas, error = self.service.get_planillas()
+        result, error = self.service.get_planillas(page=page)
         if error:
             messagebox.showerror("Error", error)
             return
+        planillas = result.get('items', []) if isinstance(result, dict) else (result or [])
+        self._total_pages = result.get('totalPages', 1) if isinstance(result, dict) else 1
+        self._total_count = result.get('totalCount', len(planillas)) if isinstance(result, dict) else len(planillas)
+        self._update_pagination()
         for p in planillas:
             self.tree.insert("", tk.END, iid=str(p.id),
                              values=(p.id, p.fecha.strftime("%Y-%m-%d"),
@@ -101,7 +121,7 @@ class PlanillaDiariaView:
         self._buscando_por_fecha = True
         self._fecha_desde = desde
         self._fecha_hasta = hasta
-        self._load_por_rango()
+        self._load_por_rango(page=1)
 
     def _limpiar_busqueda(self):
         self._buscando_por_fecha = False
@@ -109,15 +129,19 @@ class PlanillaDiariaView:
         self._fecha_hasta = None
         self.entry_desde.delete(0, tk.END)
         self.entry_hasta.delete(0, tk.END)
-        self._load()
+        self._load(page=1)
 
-    def _load_por_rango(self):
+    def _load_por_rango(self, page: int = 1):
         """Carga planillas en el rango de fechas almacenado en self._fecha_desde/.._hasta."""
-        result, error = self.service.get_by_fecha_rango(self._fecha_desde, self._fecha_hasta)
+        self._current_page = page
+        result, error = self.service.get_by_fecha_rango(self._fecha_desde, self._fecha_hasta, page=page)
         if error:
             messagebox.showerror("Error", error)
             return
         planillas = result.get('items', result) if isinstance(result, dict) else (result or [])
+        self._total_pages = result.get('totalPages', 1) if isinstance(result, dict) else 1
+        self._total_count = result.get('totalCount', len(planillas)) if isinstance(result, dict) else len(planillas)
+        self._update_pagination()
         self.tree.delete(*self.tree.get_children())
         if not planillas:
             messagebox.showinfo("Sin resultados", "No hay planillas en ese rango de fechas.")
@@ -126,6 +150,26 @@ class PlanillaDiariaView:
             self.tree.insert("", tk.END, iid=str(p.id),
                              values=(p.id, p.fecha.strftime("%Y-%m-%d"),
                                      p.operador or "", p.observaciones or ""))
+
+    def _update_pagination(self):
+        self.lbl_page.config(text=f"Página {self._current_page} de {self._total_pages}")
+        self.lbl_total.config(text=f"({self._total_count} registros)")
+        self.btn_prev.config(state=tk.NORMAL if self._current_page > 1 else tk.DISABLED)
+        self.btn_next.config(state=tk.NORMAL if self._current_page < self._total_pages else tk.DISABLED)
+
+    def _prev_page(self):
+        if self._current_page > 1:
+            if self._buscando_por_fecha:
+                self._load_por_rango(page=self._current_page - 1)
+            else:
+                self._load(page=self._current_page - 1)
+
+    def _next_page(self):
+        if self._current_page < self._total_pages:
+            if self._buscando_por_fecha:
+                self._load_por_rango(page=self._current_page + 1)
+            else:
+                self._load(page=self._current_page + 1)
 
     def _selected_dto(self):
         sel = self.tree.selection()
