@@ -14,10 +14,20 @@ class PlanillaDiariaService:
         if data:
             try:
                 items = data.get("items", data) if isinstance(data, dict) else data
-                return [PlanillaDiariaDto.from_dict(i) for i in items], None
+                planillas = [PlanillaDiariaDto.from_dict(i) for i in items]
+                if isinstance(data, dict) and 'totalCount' in data:
+                    return {
+                        'items': planillas,
+                        'totalCount': data.get('totalCount', len(planillas)),
+                        'page': data.get('page', 1),
+                        'totalPages': data.get('totalPages', 1),
+                        'hasNextPage': data.get('hasNextPage', False),
+                        'hasPreviousPage': data.get('hasPreviousPage', False)
+                    }, None
+                return {'items': planillas, 'totalCount': len(planillas), 'page': 1, 'totalPages': 1, 'hasNextPage': False, 'hasPreviousPage': False}, None
             except Exception as e:
-                return [], f"Error al procesar datos: {e}"
-        return [], error
+                return None, f"Error al procesar datos: {e}"
+        return None, error
 
     def get_by_fecha(self, fecha_str: str):
         """fecha_str: 'YYYY-MM-DD'"""
