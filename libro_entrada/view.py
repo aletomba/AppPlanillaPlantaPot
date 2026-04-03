@@ -436,6 +436,7 @@ class LibroDeEntradaView:
 
         ttk.Button(muestra_dialog, text="Guardar Muestra", command=save_muestra).pack(pady=10)
 
+        # Esperar al cierre del sub-diálogo y restaurar el grab en el diálogo padre
         muestra_dialog.wait_window(muestra_dialog)
         if self.dialog.winfo_exists():
             self.dialog.grab_set()
@@ -753,6 +754,7 @@ class LibroDeEntradaView:
 
         ttk.Button(muestra_dialog, text="Guardar Cambios", command=save_edit).pack(pady=10)
 
+        # Esperar al cierre del sub-diálogo y restaurar el grab en el diálogo padre
         muestra_dialog.wait_window(muestra_dialog)
         if self.dialog.winfo_exists():
             self.dialog.grab_set()
