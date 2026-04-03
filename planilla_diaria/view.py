@@ -305,6 +305,14 @@ class PlanillaDiariaForm:
         self.ent_dosis_sel = ttk.Entry(jf, width=10)
         self.ent_dosis_sel.grid(row=1, column=1, padx=4, pady=4)
 
+        ttk.Label(jf, text="Pre-Cal (mg/L):").grid(row=1, column=2, padx=4, pady=4, sticky=tk.E)
+        self.ent_pre_cal = ttk.Entry(jf, width=10)
+        self.ent_pre_cal.grid(row=1, column=3, padx=4, pady=4)
+
+        ttk.Label(jf, text="Post-Cal (mg/L):").grid(row=1, column=4, padx=4, pady=4, sticky=tk.E)
+        self.ent_post_cal = ttk.Entry(jf, width=10)
+        self.ent_post_cal.grid(row=1, column=5, padx=4, pady=4)
+
         # — Botones —
         btn_frame = ttk.Frame(outer)
         btn_frame.pack(fill=tk.X)
@@ -360,6 +368,12 @@ class PlanillaDiariaForm:
             if e.dosis_seleccionada is not None:
                 self.ent_dosis_sel.delete(0, tk.END)
                 self.ent_dosis_sel.insert(0, str(e.dosis_seleccionada))
+            if e.pre_cal is not None:
+                self.ent_pre_cal.delete(0, tk.END)
+                self.ent_pre_cal.insert(0, str(e.pre_cal))
+            if e.post_cal is not None:
+                self.ent_post_cal.delete(0, tk.END)
+                self.ent_post_cal.insert(0, str(e.post_cal))
 
     # ── guardado ─────────────────────────────────────────────────────────────
 
@@ -390,6 +404,8 @@ class PlanillaDiariaForm:
             dosis4=self.dosis_entries["dosis4"].get().strip() or None,
             dosis5=self.dosis_entries["dosis5"].get().strip() or None,
             dosis_seleccionada=self.ent_dosis_sel.get().strip() or None,
+            pre_cal=self.ent_pre_cal.get().strip() or None,
+            post_cal=self.ent_post_cal.get().strip() or None,
         )
 
         dto = PlanillaDiariaDto(

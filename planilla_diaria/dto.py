@@ -55,7 +55,8 @@ class AnalisisPuntoDto:
 class EnsayoJarrasDto:
     def __init__(self, id: int = 0,
                  dosis1=None, dosis2=None, dosis3=None, dosis4=None, dosis5=None,
-                 dosis_seleccionada=None, unidad_medida: str = "mg/L"):
+                 dosis_seleccionada=None, pre_cal=None, post_cal=None,
+                 unidad_medida: str = "mg/L"):
         self.id = id
         self.dosis1 = dosis1
         self.dosis2 = dosis2
@@ -63,6 +64,8 @@ class EnsayoJarrasDto:
         self.dosis4 = dosis4
         self.dosis5 = dosis5
         self.dosis_seleccionada = dosis_seleccionada
+        self.pre_cal = pre_cal
+        self.post_cal = post_cal
         self.unidad_medida = unidad_medida
 
     def to_dict(self):
@@ -74,6 +77,8 @@ class EnsayoJarrasDto:
             "dosis4": self._to_float(self.dosis4),
             "dosis5": self._to_float(self.dosis5),
             "dosisSeleccionada": self._to_float(self.dosis_seleccionada),
+            "preCal": self._to_float(self.pre_cal),
+            "postCal": self._to_float(self.post_cal),
             "unidadMedida": self.unidad_medida,
         }
 
@@ -94,6 +99,8 @@ class EnsayoJarrasDto:
             dosis4=d.get("dosis4"),
             dosis5=d.get("dosis5"),
             dosis_seleccionada=d.get("dosisSeleccionada"),
+            pre_cal=d.get("preCal"),
+            post_cal=d.get("postCal"),
             unidad_medida=d.get("unidadMedida", "mg/L"),
         )
 
