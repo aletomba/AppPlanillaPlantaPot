@@ -4,8 +4,10 @@ Aplicación de escritorio **Tkinter/Python** para operar el laboratorio de agua 
 
 ## Funcionalidades
 
-- Carga de **planilla diaria** (análisis físicoquímicos por punto + ensayo de jarras)
-- Gestión del **libro de entradas** (muestras bacteriológicas y físicoquímicas)
+- **Libro de entradas**: registro y edición con soporte para múltiples muestras por libro (bacteriológicas y físicoquímicas), búsqueda por fecha, paginación y exportación a PDF
+- **Análisis físicoquímico**: carga, edición, búsqueda por fecha / cliente y reporte PDF
+- **Análisis bacteriológico**: carga, edición, búsqueda por fecha / cliente y reporte PDF
+- **Planilla diaria**: 4 puntos de muestreo + ensayo de jarras con campos Pre-Cal y Post-Cal (mg/L), búsqueda por fecha y paginación
 - Gestión de **clientes**
 - Generación e impresión de **reportes PDF**
 - Detección automática del puerto de la API
@@ -15,16 +17,16 @@ Aplicación de escritorio **Tkinter/Python** para operar el laboratorio de agua 
 | Tecnología | Versión |
 |---|---|
 | Python | 3.11 |
-| tkinter / ttkthemes | - |
+| tkinter / ttk | - |
 | requests | - |
-| ReportLab / QuestPDF (PDF) | - |
+| ReportLab (PDF) | - |
 
 ## Primeros pasos
 
 ### Prerrequisitos
 
 - Python 3.11+
-- [ApiLaboratorioAgua](https://github.com/aletomba/ApiLaboratorioAgua) corriendo localmente
+- [ApiLaboratorioAgua](https://github.com/aletomba/ApiLaboratorioAgua) corriendo localmente en `http://localhost:5261`
 
 ### Instalación
 
@@ -45,8 +47,8 @@ python main.py
 Por defecto la app detecta automáticamente el puerto de la API. Podés forzar una URL:
 
 ```bash
-set API_BASE_URL=http://localhost:5000/api   # Windows
-# export API_BASE_URL=http://localhost:5000/api
+set API_BASE_URL=http://localhost:5261   # Windows
+# export API_BASE_URL=http://localhost:5261
 ```
 
 ## Estructura
@@ -54,14 +56,26 @@ set API_BASE_URL=http://localhost:5000/api   # Windows
 ```
 main.py                 ← Punto de entrada
 cliente/                ← Módulo gestión de clientes
-libro_entrada/          ← Módulo libro de entradas
+libro_entrada/          ← Módulo libro de entradas (multi-muestra)
 libro_bacteriologia/    ← Módulo análisis bacteriológico
 libro_fisico/           ← Módulo análisis físicoquímico
-planilla_diaria/        ← Módulo planilla diaria
+planilla_diaria/        ← Módulo planilla diaria (Pre-Cal / Post-Cal)
 data/                   ← Acceso a la API REST
-shared/                 ← Utilitarios comunes (logger, reportes)
+shared/                 ← Utilitarios comunes (logger, reportes base)
 presentation/           ← Ventana principal y navegación
 ```
+
+Cada módulo sigue la estructura `dto.py` / `service.py` / `view.py`.
+
+## Historial de cambios relevantes
+
+| Cambio |
+|---|
+| Paginación en Libro de Entradas, FisicoQuimico, Bacteriologico y PlanillaDiaria |
+| Campo Cloro en análisis físicoquímico |
+| Campos Pre-Cal y Post-Cal (mg/L) en Ensayo de Jarras |
+| Fix: al editar un libro, el botón "Añadir Muestra" no respondía después de la primera muestra |
+| Fix: al guardar un libro editado con varias muestras nuevas, solo persistía la última |
 
 ## Licencia
 
