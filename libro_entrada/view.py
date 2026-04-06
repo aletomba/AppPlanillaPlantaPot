@@ -123,8 +123,8 @@ class LibroDeEntradaView:
             self.combo_cliente_filter.set("Todos")
 
     def load_libros(self, page=1):
-        """Carga libros de entrada con paginación (50 por página)."""
-        params = {'page': page, 'pageSize': 50}
+        """Carga libros de entrada con paginación (30 por página)."""
+        params = {'page': page, 'pageSize': 30}
         libros_response, error = self.libro_service.get_libros(params=params)
         
         if error:
@@ -194,7 +194,7 @@ class LibroDeEntradaView:
 
     def _load_por_fecha(self, page=1):
         result, error = self.libro_service.get_by_fecha_rango(
-            self._fecha_desde, self._fecha_hasta, page=page, page_size=50)
+            self._fecha_desde, self._fecha_hasta, page=page, page_size=30)
         if error:
             self._libros_all = []
             self.display_data([], error)

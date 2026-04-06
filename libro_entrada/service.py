@@ -32,7 +32,7 @@ class LibroDeEntradaService:
                         'items': libros,
                         'totalCount': data.get('totalCount', len(libros)),
                         'page': data.get('page', 1),
-                        'pageSize': data.get('pageSize', 50),
+                        'pageSize': data.get('pageSize', 30),
                         'totalPages': data.get('totalPages', 1),
                         'hasNextPage': data.get('hasNextPage', False),
                         'hasPreviousPage': data.get('hasPreviousPage', False)
@@ -72,7 +72,7 @@ class LibroDeEntradaService:
         # Se asume que el endpoint es /libroEntrada/{id}/pdf y devuelve application/pdf
         return self.data_access.get_binary(f"/libroEntrada/{libro_id}/reporte")
 
-    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=50):
+    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=30):
         """Busca libros de entrada entre dos fechas (formato 'YYYY-MM-DD')."""
         data, error = self.data_access.fetch_data(
             "/libroEntrada/por-fecha",
@@ -87,7 +87,7 @@ class LibroDeEntradaService:
                         'items': libros,
                         'totalCount': data.get('totalCount', len(libros)),
                         'page': data.get('page', 1),
-                        'pageSize': data.get('pageSize', 50),
+                        'pageSize': data.get('pageSize', 30),
                         'totalPages': data.get('totalPages', 1),
                         'hasNextPage': data.get('hasNextPage', False),
                         'hasPreviousPage': data.get('hasPreviousPage', False)

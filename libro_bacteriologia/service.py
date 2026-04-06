@@ -11,7 +11,7 @@ class BacteriologiaService:
         self.base_url = new_url.rstrip("/")
         self.data_access.base_url = self.base_url
 
-    def get_bacteriologias(self, page=1, page_size=50):
+    def get_bacteriologias(self, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             "/Bacteriologico", params={"page": page, "pageSize": page_size}
         )
@@ -34,7 +34,7 @@ class BacteriologiaService:
                 return None, f"Error al procesar datos: {e}"
         return None, error
 
-    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=50):
+    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             "/Bacteriologico/por-fecha",
             params={"desde": desde_str, "hasta": hasta_str, "page": page, "pageSize": page_size}
@@ -56,7 +56,7 @@ class BacteriologiaService:
                 return None, f"Error al procesar datos: {e}"
         return None, error
 
-    def get_by_cliente(self, cliente_id, page=1, page_size=50):
+    def get_by_cliente(self, cliente_id, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             f"/Bacteriologico/por-cliente/{cliente_id}",
             params={"page": page, "pageSize": page_size}
