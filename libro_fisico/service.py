@@ -8,7 +8,7 @@ class FisicoQuimicoService:
         self.base_url = base_url
         self.data_access = APIDataAccess(base_url)
 
-    def get_fisicoquimicos(self, page=1, page_size=50):
+    def get_fisicoquimicos(self, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             "/FisicoQuimico", params={"page": page, "pageSize": page_size}
         )
@@ -31,7 +31,7 @@ class FisicoQuimicoService:
                 return None, f"Error al procesar datos: {e}"
         return None, error
 
-    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=50):
+    def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             "/FisicoQuimico/por-fecha",
             params={"desde": desde_str, "hasta": hasta_str, "page": page, "pageSize": page_size}
@@ -53,7 +53,7 @@ class FisicoQuimicoService:
                 return None, f"Error al procesar datos: {e}"
         return None, error
 
-    def get_by_cliente(self, cliente_id, page=1, page_size=50):
+    def get_by_cliente(self, cliente_id, page=1, page_size=30):
         data, error = self.data_access.fetch_data(
             f"/FisicoQuimico/por-cliente/{cliente_id}",
             params={"page": page, "pageSize": page_size}

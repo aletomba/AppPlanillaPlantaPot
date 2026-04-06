@@ -7,7 +7,7 @@ class PlanillaDiariaService:
         self.base_url = base_url
         self.data_access = APIDataAccess(base_url)
 
-    def get_planillas(self, page: int = 1, page_size: int = 50):
+    def get_planillas(self, page: int = 1, page_size: int = 30):
         data, error = self.data_access.fetch_data(
             "/PlanillaDiaria", params={"page": page, "pageSize": page_size}
         )
@@ -41,7 +41,7 @@ class PlanillaDiariaService:
                 return None, f"Error al procesar datos: {e}"
         return None, error
 
-    def get_by_fecha_rango(self, desde_str: str, hasta_str: str, page: int = 1, page_size: int = 50):
+    def get_by_fecha_rango(self, desde_str: str, hasta_str: str, page: int = 1, page_size: int = 30):
         """Busca planillas entre dos fechas ('YYYY-MM-DD')."""
         data, error = self.data_access.fetch_data(
             "/PlanillaDiaria/por-rango",
