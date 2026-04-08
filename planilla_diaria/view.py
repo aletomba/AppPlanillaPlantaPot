@@ -61,13 +61,18 @@ class PlanillaDiariaView:
                    command=self._load).pack(side=tk.LEFT, padx=3)
 
         # ── Treeview lista de planillas ───────────────────────────────────────
-        cols = ("id", "fecha", "operador", "observaciones")
+        cols = ("id", "fecha", "operador", "dosis", "pre_cal", "post_cal", "turb_consumo", "observaciones")
         tree_frame = ttk.Frame(self.frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=10)
 
         self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=8)
-        for col, hdr, w in [("id", "ID", 50), ("fecha", "Fecha", 120),
-                             ("operador", "Operador", 150), ("observaciones", "Observaciones", 300)]:
+        for col, hdr, w in [("id", "ID", 50), ("fecha", "Fecha", 100),
+                             ("operador", "Operador", 120),
+                             ("dosis", "Dosis", 70),
+                             ("pre_cal", "Pre-Cal", 70),
+                             ("post_cal", "Post-Cal", 70),
+                             ("turb_consumo", "Turb. Consumo", 100),
+                             ("observaciones", "Observaciones", 200)]:
             self.tree.heading(col, text=hdr)
             self.tree.column(col, width=w, anchor=tk.W)
         vsb = ttk.Scrollbar(tree_frame, orient="vertical", command=self.tree.yview)
@@ -103,8 +108,7 @@ class PlanillaDiariaView:
         self._update_pagination()
         for p in planillas:
             self.tree.insert("", tk.END, iid=str(p.id),
-                             values=(p.id, p.fecha.strftime("%Y-%m-%d"),
-                                     p.operador or "", p.observaciones or ""))
+                             values=self._row_values(p))
 
     def _buscar_por_fecha(self):
         desde = self.entry_desde.get().strip()
@@ -148,8 +152,21 @@ class PlanillaDiariaView:
             return
         for p in planillas:
             self.tree.insert("", tk.END, iid=str(p.id),
-                             values=(p.id, p.fecha.strftime("%Y-%m-%d"),
-                                     p.operador or "", p.observaciones or ""))
+                             values=self._row_values(p))
+
+    def _row_values(self, p):
+        ej = p.ensayo_jarras
+        dosis = (ej.dosis_seleccionada if ej else None) or ""
+        pre_cal = (ej.pre_cal if ej else None) or ""
+        post_cal = (ej.post_cal if ej else None) or ""
+        turb_consumo = ""
+        for a in p.analisis_por_punto:
+            if a.punto_muestreo == "Consumo":
+                turb_consumo = a.turbidez or ""
+                break
+        return (p.id, p.fecha.strftime("%Y-%m-%d"),
+                p.operador or "", dosis, pre_cal, post_cal,
+                turb_consumo, p.observaciones or "")
 
     def _update_pagination(self):
         self.lbl_page.config(text=f"Página {self._current_page} de {self._total_pages}")
