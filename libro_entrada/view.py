@@ -243,14 +243,12 @@ class LibroDeEntradaView:
             self.treeview.insert("", "end", values=["No hay datos para mostrar"])
             return
 
-        columns = ["id", "fecha_registro", "fecha_llegada", "fecha_analisis", "procedencia", "observaciones", "muestras"]
+        columns = ["id", "fecha_llegada", "fecha_analisis", "procedencia", "muestras"]
         column_headers = {
             "id": "ID",
-            "fecha_registro": "Fecha Registro",
             "fecha_llegada": "Fecha Llegada",
             "fecha_analisis": "Fecha Análisis",
             "procedencia": "Procedencia",
-            "observaciones": "Observaciones",
             "muestras": "Muestras"
         }
         self.treeview["columns"] = columns
@@ -269,11 +267,9 @@ class LibroDeEntradaView:
 
                 values = [
                     libro.id,
-                    libro.fecha_registro.strftime("%d/%m/%Y") if libro.fecha_registro else "",
                     libro.fecha_llegada.strftime("%d/%m/%Y") if libro.fecha_llegada else "",
                     libro.fecha_analisis.strftime("%d/%m/%Y") if libro.fecha_analisis else "",
                     libro.procedencia or "",
-                    libro.observaciones or "",
                     muestras_summary
                 ]
 
