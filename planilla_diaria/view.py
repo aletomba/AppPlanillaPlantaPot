@@ -61,12 +61,12 @@ class PlanillaDiariaView:
                    command=self._load).pack(side=tk.LEFT, padx=3)
 
         # ── Treeview lista de planillas ───────────────────────────────────────
-        cols = ("id", "fecha", "operador", "dosis", "pre_cal", "post_cal", "turb_consumo", "observaciones")
+        cols = ("fecha", "operador", "dosis", "pre_cal", "post_cal", "turb_consumo", "observaciones")
         tree_frame = ttk.Frame(self.frame)
         tree_frame.pack(fill=tk.BOTH, expand=True, padx=10)
 
         self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings", height=8)
-        for col, hdr, w in [("id", "ID", 50), ("fecha", "Fecha", 100),
+        for col, hdr, w in [("fecha", "Fecha", 100),
                              ("operador", "Operador", 120),
                              ("dosis", "Dosis", 70),
                              ("pre_cal", "Pre-Cal", 70),
@@ -164,7 +164,7 @@ class PlanillaDiariaView:
             if a.punto_muestreo == "Consumo":
                 turb_consumo = a.turbidez or ""
                 break
-        return (p.id, p.fecha.strftime("%Y-%m-%d"),
+        return (p.fecha.strftime("%Y-%m-%d"),
                 p.operador or "", dosis, pre_cal, post_cal,
                 turb_consumo, p.observaciones or "")
 
@@ -193,19 +193,12 @@ class PlanillaDiariaView:
         if not sel:
             messagebox.showwarning("Aviso", "Seleccione una planilla.")
             return None
-        planilla_id = int(sel[0])
-        # Buscar en la lista local
-        for item in self.tree.get_children():
-            vals = self.tree.item(item, "values")
-            if int(vals[0]) == planilla_id:
-                fecha_str = vals[1]
-                # Pedimos por fecha para obtener datos completos
-                dto, err = self.service.get_by_fecha(fecha_str)
-                if err:
-                    messagebox.showerror("Error", err)
-                    return None
-                return dto
-        return None
+        fecha_str = self.tree.item(sel[0], "values")[0]
+        dto, err = self.service.get_by_fecha(fecha_str)
+        if err:
+            messagebox.showerror("Error", err)
+            return None
+        return dto
 
     def _open_create(self):
         PlanillaDiariaForm(self.frame, self.service, on_save=self._load)
@@ -221,7 +214,7 @@ class PlanillaDiariaView:
             messagebox.showwarning("Aviso", "Seleccione una planilla.")
             return
         planilla_id = int(sel[0])
-        fecha = self.tree.item(sel[0], "values")[1]
+        fecha = self.tree.item(sel[0], "values")[0]
         if not messagebox.askyesno("Confirmar", f"¿Eliminar planilla del {fecha}?"):
             return
         data, error = self.service.eliminar(planilla_id)
