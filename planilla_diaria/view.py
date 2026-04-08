@@ -156,9 +156,9 @@ class PlanillaDiariaView:
 
     def _row_values(self, p):
         ej = p.ensayo_jarras
-        dosis = ej.dosis_seleccionada if ej else ""
-        pre_cal = ej.pre_cal if ej else ""
-        post_cal = ej.post_cal if ej else ""
+        dosis = (ej.dosis_seleccionada if ej else None) or ""
+        pre_cal = (ej.pre_cal if ej else None) or ""
+        post_cal = (ej.post_cal if ej else None) or ""
         turb_consumo = ""
         for a in p.analisis_por_punto:
             if a.punto_muestreo == "Consumo":
