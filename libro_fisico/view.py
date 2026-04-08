@@ -69,16 +69,14 @@ class FisicoQuimicoView(AnalisisViewBase):
 
     def get_columns_headers(self):
         columns = [
-            "id", "fecha", "fecha_llegada", "fecha_analisis", "procedencia",
+            "fecha_llegada", "procedencia", "muestra_procedencia",
             "ph", "turbidez", "alcalinidad", "dureza", "nitritos",
-            "cloruros", "calcio", "magnesio", "dbo5", "cloro", "muestra_id",
+            "cloruros", "calcio", "magnesio", "dbo5", "cloro",
         ]
         headers = {
-            "id": "ID",
-            "fecha": "Fecha Registro",
             "fecha_llegada": "Fecha Llegada",
-            "fecha_analisis": "Fecha Análisis",
             "procedencia": "Procedencia",
+            "muestra_procedencia": "Proc. Muestra",
             "ph": "pH",
             "turbidez": "Turbidez",
             "alcalinidad": "Alcalinidad",
@@ -89,17 +87,14 @@ class FisicoQuimicoView(AnalisisViewBase):
             "magnesio": "Magnesio",
             "dbo5": "DBO5",
             "cloro": "Cloro",
-            "muestra_id": "Muestra ID",
         }
         return columns, headers
 
     def build_row_values(self, fq):
         return [
-            fq.id,
-            fq.fecha.strftime("%d/%m/%Y") if fq.fecha else "",
             fq.fecha_llegada.strftime("%d/%m/%Y") if fq.fecha_llegada else "",
-            fq.fecha_analisis.strftime("%d/%m/%Y") if fq.fecha_analisis else "",
             fq.procedencia or "",
+            fq.muestra_procedencia or "",
             fq.ph or "",
             fq.turbidez or "",
             fq.alcalinidad or "",
@@ -110,7 +105,6 @@ class FisicoQuimicoView(AnalisisViewBase):
             fq.magnesio or "",
             fq.dbo5 or "",
             fq.cloro or "",
-            fq.muestra_id,
         ]
 
     def do_export_pdf(self, obj, ruta, libros=None):

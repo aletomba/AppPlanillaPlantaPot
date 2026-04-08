@@ -15,7 +15,8 @@ class BacteriologiaDto:
         coloniasAgar: str = "",
         coliFecalesUfc: str = "",
         observaciones: str = "",
-        muestraId: int = 0
+        muestraId: int = 0,
+        muestra_procedencia: str = ""
     ):
         self.id = id
         self.fecha = fecha or datetime.now()
@@ -28,6 +29,7 @@ class BacteriologiaDto:
         self.coliFecalesUfc = coliFecalesUfc
         self.observaciones = observaciones
         self.muestraId = muestraId
+        self.muestra_procedencia = muestra_procedencia
 
     def to_dict(self):
         return {
@@ -59,7 +61,8 @@ class BacteriologiaDto:
             coloniasAgar=data.get("coloniasAgar", ""),
             coliFecalesUfc=data.get("coliFecalesUfc", ""),
             observaciones=data.get("observaciones", ""),
-            muestraId=data.get("muestraId", 0)
+            muestraId=data.get("muestraId", 0),
+            muestra_procedencia=data.get("muestraProcedencia", "")
         )
 
     def to_row(self):
