@@ -243,14 +243,12 @@ class LibroDeEntradaView:
             self.treeview.insert("", "end", values=["No hay datos para mostrar"])
             return
 
-        columns = ["id", "fecha_registro", "fecha_llegada", "fecha_analisis", "procedencia", "observaciones", "muestras"]
+        columns = ["id", "fecha_llegada", "fecha_analisis", "procedencia", "muestras"]
         column_headers = {
             "id": "ID",
-            "fecha_registro": "Fecha Registro",
             "fecha_llegada": "Fecha Llegada",
             "fecha_analisis": "Fecha Análisis",
             "procedencia": "Procedencia",
-            "observaciones": "Observaciones",
             "muestras": "Muestras"
         }
         self.treeview["columns"] = columns
@@ -269,11 +267,9 @@ class LibroDeEntradaView:
 
                 values = [
                     libro.id,
-                    libro.fecha_registro.strftime("%d/%m/%Y") if libro.fecha_registro else "",
                     libro.fecha_llegada.strftime("%d/%m/%Y") if libro.fecha_llegada else "",
                     libro.fecha_analisis.strftime("%d/%m/%Y") if libro.fecha_analisis else "",
                     libro.procedencia or "",
-                    libro.observaciones or "",
                     muestras_summary
                 ]
 
@@ -537,27 +533,27 @@ class LibroDeEntradaView:
 
         ttk.Label(self.dialog, text="Observaciones:").pack(pady=5)
         self.entry_observaciones = ttk.Entry(self.dialog)
-        self.entry_observaciones.insert(0, values[5])
+        self.entry_observaciones.insert(0, libro.observaciones or "")
         self.entry_observaciones.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Fecha Llegada (DD/MM/YYYY):").pack(pady=5)
         self.entry_fecha_llegada = ttk.Entry(self.dialog)
-        self.entry_fecha_llegada.insert(0, values[2])
+        self.entry_fecha_llegada.insert(0, values[1])
         self.entry_fecha_llegada.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Fecha (DD/MM/YYYY):").pack(pady=5)
         self.entry_fecha = ttk.Entry(self.dialog)
-        self.entry_fecha.insert(0, values[1])
+        self.entry_fecha.insert(0, libro.fecha_registro.strftime("%d/%m/%Y") if libro.fecha_registro else "")
         self.entry_fecha.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Fecha Análisis (DD/MM/YYYY, opcional):").pack(pady=5)
         self.entry_fecha_analisis = ttk.Entry(self.dialog)
-        self.entry_fecha_analisis.insert(0, values[3])
+        self.entry_fecha_analisis.insert(0, values[2])
         self.entry_fecha_analisis.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Procedencia:").pack(pady=5)
         self.entry_procedencia = ttk.Entry(self.dialog)
-        self.entry_procedencia.insert(0, values[4])
+        self.entry_procedencia.insert(0, values[3])
         self.entry_procedencia.pack(pady=5, fill=tk.X, padx=10)
 
         # Sitio de extracción ahora se captura por muestra en su diálogo
@@ -630,7 +626,7 @@ class LibroDeEntradaView:
 
         item = self.treeview.item(selected_item[0])
         libro_id = item["tags"][0]
-        libro_procedencia = item["values"][4]
+        libro_procedencia = item["values"][3]
 
         if not messagebox.askyesno("Confirmar", f"¿Eliminar el libro de procedencia {libro_procedencia}?"):
             return
