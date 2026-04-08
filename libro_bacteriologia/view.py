@@ -67,38 +67,32 @@ class BacteriologiaView(AnalisisViewBase):
 
     def get_columns_headers(self):
         columns = [
-            "id", "fecha", "fecha_llegada", "fecha_analisis", "procedencia",
+            "fecha_llegada", "procedencia", "muestra_procedencia",
             "coliformesNmp", "coliformesFecalesNmp", "coloniasAgar", "coliFecalesUfc",
-            "observaciones", "muestraId",
+            "observaciones",
         ]
         headers = {
-            "id": "ID",
-            "fecha": "Fecha Registro",
             "fecha_llegada": "Fecha Llegada",
-            "fecha_analisis": "Fecha Análisis",
             "procedencia": "Procedencia",
+            "muestra_procedencia": "Proc. Muestra",
             "coliformesNmp": "Coliformes (NMP)",
             "coliformesFecalesNmp": "Coliformes Fecales (NMP)",
             "coloniasAgar": "Colonias Agar",
             "coliFecalesUfc": "Coli Fecales (UFC)",
             "observaciones": "Observaciones",
-            "muestraId": "Muestra ID",
         }
         return columns, headers
 
     def build_row_values(self, bq):
         return [
-            bq.id,
-            bq.fecha.strftime("%d/%m/%Y") if bq.fecha else "",
             bq.fecha_llegada.strftime("%d/%m/%Y") if bq.fecha_llegada else "",
-            bq.fecha_analisis.strftime("%d/%m/%Y") if bq.fecha_analisis else "",
             bq.procedencia or "",
+            bq.muestra_procedencia or "",
             bq.coliformesNmp or "",
             bq.coliformesFecalesNmp or "",
             bq.coloniasAgar or "",
             bq.coliFecalesUfc or "",
             bq.observaciones or "",
-            bq.muestraId,
         ]
 
     def do_export_pdf(self, obj, ruta, libros=None):

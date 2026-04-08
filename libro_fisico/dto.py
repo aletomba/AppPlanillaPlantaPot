@@ -22,7 +22,8 @@ class FisicoQuimicoDto:
         magnesio: str = "",
         dbo5: str = "",
         cloro: str = "",
-        muestra_id: int = 0
+        muestra_id: int = 0,
+        muestra_procedencia: str = ""
     ):
         self.id = id
         self.fecha = fecha or datetime.now()
@@ -40,6 +41,7 @@ class FisicoQuimicoDto:
         self.dbo5 = dbo5
         self.cloro = cloro
         self.muestra_id = muestra_id
+        self.muestra_procedencia = muestra_procedencia
 
     def to_dict(self):
         return {
@@ -79,7 +81,8 @@ class FisicoQuimicoDto:
             magnesio=data.get("magnesio", ""),
             dbo5=data.get("dbo5", ""),
             cloro=data.get("cloro", ""),
-            muestra_id=data.get("muestraId", 0)
+            muestra_id=data.get("muestraId", 0),
+            muestra_procedencia=data.get("muestraProcedencia", "")
         )
     
     def to_row(self):
