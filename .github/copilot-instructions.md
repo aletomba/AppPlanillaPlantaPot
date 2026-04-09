@@ -19,10 +19,10 @@ python main.py              # lanzar aplicación
 ```
 
 ## Convenciones
-- Consultar **Context7 MCP** siempre que se vaya a:
-  - Implementar código con dependencias externas (Tkinter, requests, reportlab, etc.)
-  - Modificar código existente que use una librería externa
-  - Implementar una nueva issue o feature, para verificar el patrón correcto antes de escribir código
+- **Siempre** consultar **Context7 MCP** antes de escribir o modificar código. Sin excepciones.
+  - Resolver la librería con `resolve-library-id` y luego consultar docs con `query-docs`
+  - Aplica para: Tkinter, requests, reportlab, y cualquier otra dependencia
+  - Incluso si se cree conocer la API, consultar igual — el training data puede estar desactualizado
 - UI con **Tkinter + ttk**
 - Cada `view.py` hereda de la vista base o implementa patrón similar
 - Los `service.py` llaman a `api_data_acces.py` que apunta a `http://localhost:5261`
