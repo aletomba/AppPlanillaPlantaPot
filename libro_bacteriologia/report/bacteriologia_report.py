@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, time
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -22,6 +23,7 @@ class BacteriologiaReport:
             ("Fecha Análisis", "fecha_analisis"),
             ("Procedencia (libro)", "procedencia"),
             ("Muestreador", "muestra_nombre_muestreador"),
+            ("Hora Extracción", "muestra_hora_extraccion"),
             ("Latitud", "muestra_latitud"),
             ("Longitud", "muestra_longitud"),
             ("Muestra ID", "muestraId"),
@@ -52,12 +54,20 @@ class BacteriologiaReport:
             # Construir meta rows usando template y lookup - con índice numérico
             meta_rows = []
             meta_label_set = set()
-            for i, (label, key) in enumerate(meta_rows_template, start=1):
+            counter = 0
+            for label, key in meta_rows_template:
                 value = mdata.get(key, getattr(bq, key, ""))
                 if exclude_meta_keys and label in exclude_meta_keys:
                     continue
+                counter += 1
                 meta_label_set.add(label)
-                meta_rows.append([str(i), label, BacteriologiaReport._format_value(value)])
+                meta_rows.append([str(counter), label, BacteriologiaReport._format_value(value)])
+
+            # Observaciones de Muestra: campo propio del análisis bacteriológico
+            obs_muestra = getattr(bq, "observaciones", "")
+            if obs_muestra:
+                counter += 1
+                meta_rows.append([str(counter), "Observaciones de Muestra", BacteriologiaReport._format_value(obs_muestra)])
 
             # Tabla de metadatos con columna de número, etiqueta y valor
             meta_table = Table(meta_rows, colWidths=[30, 140, 330])
@@ -102,9 +112,10 @@ class BacteriologiaReport:
         try:
             if value is None:
                 return ""
-            from datetime import datetime
             if isinstance(value, datetime):
                 return value.strftime("%d/%m/%Y")
+            if isinstance(value, time):
+                return value.strftime("%H:%M")
             return str(value)
         except Exception:
             return str(value)
@@ -138,6 +149,7 @@ class BacteriologiaReport:
                         "observaciones": getattr(libro, "observaciones", ""),
                         # datos de la muestra
                         "muestra_nombre_muestreador": getattr(m, "nombre_muestreador", ""),
+                        "muestra_hora_extraccion": getattr(m, "hora_extraccion", ""),
                         "muestra_latitud": getattr(m, "latitud", ""),
                         "muestra_longitud": getattr(m, "longitud", ""),
                         "muestraId": mid,
