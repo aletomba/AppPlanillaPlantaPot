@@ -68,6 +68,7 @@ class FisicoQuimicoReport:
                 ["Fecha Análisis", FisicoQuimicoReport._format_value(getattr(fq, "fecha_analisis", ""))],
                 ["Procedencia (libro)", FisicoQuimicoReport._format_value(mdata.get("libro_procedencia", getattr(fq, "procedencia", "")))],
                 ["Sitio Extracción", FisicoQuimicoReport._format_value(mdata.get("libro_sitio_extraccion", ""))],
+                ["Hora Extracción", FisicoQuimicoReport._format_value(mdata.get("muestra_hora_extraccion", ""))],
                 ["Muestreador", FisicoQuimicoReport._format_value(mdata.get("muestra_nombre_muestreador", ""))],
                 ["Latitud", FisicoQuimicoReport._format_value(mdata.get("muestra_latitud", ""))],
                 ["Longitud", FisicoQuimicoReport._format_value(mdata.get("muestra_longitud", ""))],
@@ -117,11 +118,11 @@ class FisicoQuimicoReport:
         try:
             if value is None:
                 return ""
-            # Si es datetime, formatear como dd/mm/YYYY
-            from datetime import datetime
-
+            from datetime import datetime, time
             if isinstance(value, datetime):
                 return value.strftime("%d/%m/%Y")
+            if isinstance(value, time):
+                return value.strftime("%H:%M")
             return str(value)
         except Exception:
             return str(value)
@@ -153,6 +154,7 @@ class FisicoQuimicoReport:
                         "libro_sitio_extraccion": getattr(libro, "sitio_extraccion", ""),
                         "libro_observaciones": getattr(libro, "observaciones", ""),
                         "muestra_nombre_muestreador": getattr(m, "nombre_muestreador", ""),
+                        "muestra_hora_extraccion": getattr(m, "hora_extraccion", ""),
                         "muestra_latitud": getattr(m, "latitud", ""),
                         "muestra_longitud": getattr(m, "longitud", ""),
                         "muestra_id": mid,

@@ -22,6 +22,7 @@ class BacteriologiaReport:
             ("Fecha Análisis", "fecha_analisis"),
             ("Procedencia (libro)", "procedencia"),
             ("Muestreador", "muestra_nombre_muestreador"),
+            ("Hora Extracción", "muestra_hora_extraccion"),
             ("Latitud", "muestra_latitud"),
             ("Longitud", "muestra_longitud"),
             ("Muestra ID", "muestraId"),
@@ -58,6 +59,10 @@ class BacteriologiaReport:
                     continue
                 meta_label_set.add(label)
                 meta_rows.append([str(i), label, BacteriologiaReport._format_value(value)])
+
+            # Observaciones de Muestra: campo propio del análisis bacteriológico
+            obs_muestra = getattr(bq, "observaciones", "")
+            meta_rows.append([str(len(meta_rows) + 1), "Observaciones de Muestra", BacteriologiaReport._format_value(obs_muestra)])
 
             # Tabla de metadatos con columna de número, etiqueta y valor
             meta_table = Table(meta_rows, colWidths=[30, 140, 330])
@@ -102,9 +107,11 @@ class BacteriologiaReport:
         try:
             if value is None:
                 return ""
-            from datetime import datetime
+            from datetime import datetime, time
             if isinstance(value, datetime):
                 return value.strftime("%d/%m/%Y")
+            if isinstance(value, time):
+                return value.strftime("%H:%M")
             return str(value)
         except Exception:
             return str(value)
@@ -138,6 +145,7 @@ class BacteriologiaReport:
                         "observaciones": getattr(libro, "observaciones", ""),
                         # datos de la muestra
                         "muestra_nombre_muestreador": getattr(m, "nombre_muestreador", ""),
+                        "muestra_hora_extraccion": getattr(m, "hora_extraccion", ""),
                         "muestra_latitud": getattr(m, "latitud", ""),
                         "muestra_longitud": getattr(m, "longitud", ""),
                         "muestraId": mid,
