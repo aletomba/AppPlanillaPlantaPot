@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, time
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -118,7 +119,6 @@ class FisicoQuimicoReport:
         try:
             if value is None:
                 return ""
-            from datetime import datetime, time
             if isinstance(value, datetime):
                 return value.strftime("%d/%m/%Y")
             if isinstance(value, time):
