@@ -243,9 +243,10 @@ class LibroDeEntradaView:
             self.treeview.insert("", "end", values=["No hay datos para mostrar"])
             return
 
-        columns = ["id", "fecha_llegada", "fecha_analisis", "procedencia", "muestras"]
+        columns = ["id", "nro_analisis", "fecha_llegada", "fecha_analisis", "procedencia", "muestras"]
         column_headers = {
             "id": "ID",
+            "nro_analisis": "N° Análisis",
             "fecha_llegada": "Fecha Llegada",
             "fecha_analisis": "Fecha Análisis",
             "procedencia": "Procedencia",
@@ -267,6 +268,7 @@ class LibroDeEntradaView:
 
                 values = [
                     libro.id,
+                    libro.nro_analisis or "",
                     libro.fecha_llegada.strftime("%d/%m/%Y") if libro.fecha_llegada else "",
                     libro.fecha_analisis.strftime("%d/%m/%Y") if libro.fecha_analisis else "",
                     libro.procedencia or "",
@@ -332,6 +334,10 @@ class LibroDeEntradaView:
         ttk.Label(self.dialog, text="Observaciones:").pack(pady=5)
         self.entry_observaciones = ttk.Entry(self.dialog)
         self.entry_observaciones.pack(pady=5, fill=tk.X, padx=10)
+
+        ttk.Label(self.dialog, text="N° Análisis (opcional):").pack(pady=5)
+        self.entry_nro_analisis = ttk.Entry(self.dialog)
+        self.entry_nro_analisis.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Fecha Llegada (DD/MM/YYYY):").pack(pady=5)
         self.entry_fecha_llegada = ttk.Entry(self.dialog)
@@ -450,6 +456,7 @@ class LibroDeEntradaView:
             fecha_analisis = datetime.strptime(fecha_analisis_str, "%d/%m/%Y") if fecha_analisis_str else None
             procedencia = self.entry_procedencia.get().strip()
             observaciones = self.entry_observaciones.get().strip()
+            nro_analisis = self.entry_nro_analisis.get().strip()
             if not procedencia:
                 raise ValueError("Procedencia es obligatoria.")
         except ValueError as e:
@@ -467,6 +474,7 @@ class LibroDeEntradaView:
 
         libro_dto = LibroDeEntradaDto(
             observaciones=observaciones,
+            nro_analisis=nro_analisis,
             fecha_llegada=fecha_llegada,
             fecha=fecha,
             fecha_analisis=fecha_analisis,
@@ -536,6 +544,11 @@ class LibroDeEntradaView:
         self.entry_observaciones.insert(0, libro.observaciones or "")
         self.entry_observaciones.pack(pady=5, fill=tk.X, padx=10)
 
+        ttk.Label(self.dialog, text="N° Análisis (opcional):").pack(pady=5)
+        self.entry_nro_analisis = ttk.Entry(self.dialog)
+        self.entry_nro_analisis.insert(0, libro.nro_analisis or "")
+        self.entry_nro_analisis.pack(pady=5, fill=tk.X, padx=10)
+
         ttk.Label(self.dialog, text="Fecha Llegada (DD/MM/YYYY):").pack(pady=5)
         self.entry_fecha_llegada = ttk.Entry(self.dialog)
         self.entry_fecha_llegada.insert(0, values[1])
@@ -585,6 +598,7 @@ class LibroDeEntradaView:
             fecha_analisis = datetime.strptime(fecha_analisis_str, "%d/%m/%Y") if fecha_analisis_str else None
             procedencia = self.entry_procedencia.get().strip()
             observaciones = self.entry_observaciones.get().strip()
+            nro_analisis = self.entry_nro_analisis.get().strip()
             if not procedencia:
                 raise ValueError("Procedencia es obligatoria.")
         except ValueError as e:
@@ -603,6 +617,7 @@ class LibroDeEntradaView:
         libro_dto = LibroDeEntradaDto(
             id=libro_id,
             observaciones=observaciones,
+            nro_analisis=nro_analisis,
             fecha_llegada=fecha_llegada,
             fecha=fecha,
             fecha_analisis=fecha_analisis,

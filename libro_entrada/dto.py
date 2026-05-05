@@ -143,6 +143,7 @@ class LibroDeEntradaDto:
     def __init__(
         self,
         id: int = 0,
+        nro_analisis: str = "",
         observaciones: str = "",
         fecha_llegada: Optional[datetime] = None,
         fecha: Optional[datetime] = None,
@@ -152,6 +153,7 @@ class LibroDeEntradaDto:
         muestras: Optional[List[MuestraDto]] = None
     ):
         self.id = id
+        self.nro_analisis = nro_analisis
         self.observaciones = observaciones
         self.fecha_llegada = fecha_llegada or datetime.now()
         self.fecha = fecha or datetime.now()
@@ -176,6 +178,7 @@ class LibroDeEntradaDto:
             "fechaAnalisis": self.fecha_analisis.isoformat() + "Z" if self.fecha_analisis else None,
             "procedencia": self.procedencia,
             "sitioExtraccion": self.sitio_extraccion,
+            "nroAnalisis": self.nro_analisis,
             "observaciones": self.observaciones,
             "muestras": muestras_serializadas
         }
@@ -192,6 +195,7 @@ class LibroDeEntradaDto:
         fecha_analisis = datetime.fromisoformat(data["fechaAnalisis"].replace("Z", "+00:00")) if data.get("fechaAnalisis") else None
         return LibroDeEntradaDto(
             id=data.get("id", 0),
+            nro_analisis=data.get("nroAnalisis", "") or "",
             observaciones=data.get("observaciones", ""),
             fecha_llegada=datetime.fromisoformat(data["fechaLLegada"].replace("Z", "+00:00")) if data.get("fechaLLegada") else datetime.now(),
             fecha=datetime.fromisoformat(data["fecha"].replace("Z", "+00:00")) if data.get("fecha") else datetime.now(),
@@ -210,6 +214,7 @@ class LibroDeEntradaResponseDto:
         fecha_analisis: Optional[datetime] = None,
         procedencia: str = "",
         sitio_extraccion: str = "",
+        nro_analisis: str = "",
         observaciones: str = "",
         muestras: Optional[List[MuestraResponseDto]] = None
     ):
@@ -219,6 +224,7 @@ class LibroDeEntradaResponseDto:
         self.fecha_analisis = fecha_analisis
         self.procedencia = procedencia
         self.sitio_extraccion = sitio_extraccion
+        self.nro_analisis = nro_analisis
         self.observaciones = observaciones
         self.muestras = muestras or []
 
@@ -236,6 +242,7 @@ class LibroDeEntradaResponseDto:
                 fecha_analisis=fecha_analisis,
                 procedencia=data.get("procedencia", ""),
                 sitio_extraccion=data.get("sitioExtraccion", ""),
+                nro_analisis=data.get("nroAnalisis", "") or "",
                 observaciones=data.get("observaciones", ""),
                 muestras=muestras
             )
