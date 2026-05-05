@@ -70,7 +70,7 @@ class FisicoQuimicoView(AnalisisViewBase):
     def get_columns_headers(self):
         columns = [
             "fecha_llegada", "procedencia", "muestra_procedencia",
-            "ph", "turbidez", "alcalinidad", "dureza", "nitritos",
+            "ph", "turbidez", "alcalinidad", "dureza", "nitritos", "nitratos", "amonio",
             "cloruros", "calcio", "magnesio", "dbo5", "cloro",
         ]
         headers = {
@@ -82,6 +82,8 @@ class FisicoQuimicoView(AnalisisViewBase):
             "alcalinidad": "Alcalinidad",
             "dureza": "Dureza",
             "nitritos": "Nitritos",
+            "nitratos": "Nitratos",
+            "amonio": "Amonio",
             "cloruros": "Cloruros",
             "calcio": "Calcio",
             "magnesio": "Magnesio",
@@ -100,6 +102,8 @@ class FisicoQuimicoView(AnalisisViewBase):
             fq.alcalinidad or "",
             fq.dureza or "",
             fq.nitritos or "",
+            fq.nitratos or "",
+            fq.amonio or "",
             fq.cloruros or "",
             fq.calcio or "",
             fq.magnesio or "",
@@ -119,6 +123,8 @@ class FisicoQuimicoView(AnalisisViewBase):
         fields["alcalinidad"] = self._add_field(inner, "Alcalinidad:")
         fields["dureza"]     = self._add_field(inner, "Dureza:")
         fields["nitritos"]   = self._add_field(inner, "Nitritos:")
+        fields["nitratos"]   = self._add_field(inner, "Nitratos:")
+        fields["amonio"]     = self._add_field(inner, "Amonio:")
         fields["cloruros"]   = self._add_field(inner, "Cloruros:")
         fields["calcio"]     = self._add_field(inner, "Calcio:")
         fields["magnesio"]   = self._add_field(inner, "Magnesio:")
@@ -137,6 +143,8 @@ class FisicoQuimicoView(AnalisisViewBase):
             alcalinidad=fields["alcalinidad"].get().strip(),
             dureza=fields["dureza"].get().strip(),
             nitritos=fields["nitritos"].get().strip(),
+            nitratos=fields["nitratos"].get().strip(),
+            amonio=fields["amonio"].get().strip(),
             cloruros=fields["cloruros"].get().strip(),
             calcio=fields["calcio"].get().strip(),
             magnesio=fields["magnesio"].get().strip(),
@@ -154,6 +162,8 @@ class FisicoQuimicoView(AnalisisViewBase):
         fields["alcalinidad"] = self._add_field(inner, "Alcalinidad:", obj.alcalinidad or "")
         fields["dureza"]     = self._add_field(inner, "Dureza:", obj.dureza or "")
         fields["nitritos"]   = self._add_field(inner, "Nitritos:", obj.nitritos or "")
+        fields["nitratos"]   = self._add_field(inner, "Nitratos:", obj.nitratos or "")
+        fields["amonio"]     = self._add_field(inner, "Amonio:", obj.amonio or "")
         fields["cloruros"]   = self._add_field(inner, "Cloruros:", obj.cloruros or "")
         fields["calcio"]     = self._add_field(inner, "Calcio:", obj.calcio or "")
         fields["magnesio"]   = self._add_field(inner, "Magnesio:", obj.magnesio or "")
@@ -173,6 +183,8 @@ class FisicoQuimicoView(AnalisisViewBase):
             alcalinidad=fields["alcalinidad"].get().strip(),
             dureza=fields["dureza"].get().strip(),
             nitritos=fields["nitritos"].get().strip(),
+            nitratos=fields["nitratos"].get().strip(),
+            amonio=fields["amonio"].get().strip(),
             cloruros=fields["cloruros"].get().strip(),
             calcio=fields["calcio"].get().strip(),
             magnesio=fields["magnesio"].get().strip(),

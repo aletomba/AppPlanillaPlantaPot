@@ -17,6 +17,8 @@ class FisicoQuimicoDto:
         alcalinidad: str = "",
         dureza: str = "",
         nitritos: str = "",
+        nitratos: str = "",
+        amonio: str = "",
         cloruros: str = "",
         calcio: str = "",
         magnesio: str = "",
@@ -35,6 +37,8 @@ class FisicoQuimicoDto:
         self.alcalinidad = alcalinidad
         self.dureza = dureza
         self.nitritos = nitritos
+        self.nitratos = nitratos
+        self.amonio = amonio
         self.cloruros = cloruros
         self.calcio = calcio
         self.magnesio = magnesio
@@ -55,6 +59,8 @@ class FisicoQuimicoDto:
             "alcalinidad": self.alcalinidad,
             "dureza": self.dureza,
             "nitritos": self.nitritos,
+            "nitratos": self.nitratos,
+            "amonio": self.amonio,
             "cloruros": self.cloruros,
             "calcio": self.calcio,
             "magnesio": self.magnesio,
@@ -76,6 +82,8 @@ class FisicoQuimicoDto:
             alcalinidad=data.get("alcalinidad", ""),
             dureza=data.get("dureza", ""),
             nitritos=data.get("nitritos", ""),
+            nitratos=data.get("nitratos", ""),
+            amonio=data.get("amonio", ""),
             cloruros=data.get("cloruros", ""),
             calcio=data.get("calcio", ""),
             magnesio=data.get("magnesio", ""),
@@ -93,6 +101,7 @@ class FisicoQuimicoDto:
             self.fecha_analisis.strftime("%d/%m/%Y") if self.fecha_analisis else "",
             self.procedencia,
             self.ph, self.turbidez, self.alcalinidad, self.dureza,
-            self.nitritos, self.cloruros, self.calcio, self.magnesio,
+            self.nitritos or "", self.nitratos or "", self.amonio or "",
+            self.cloruros or "", self.calcio or "", self.magnesio or "",
             self.dbo5, self.cloro, self.muestra_id
         ]

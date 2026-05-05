@@ -40,6 +40,8 @@ class FisicoQuimicoReport:
             ("Alcalinidad", "alcalinidad"),
             ("Dureza", "dureza"),
             ("Nitritos", "nitritos"),
+            ("Nitratos", "nitratos"),
+            ("Amonio", "amonio"),
             ("Cloruros", "cloruros"),
             ("Calcio", "calcio"),
             ("Magnesio", "magnesio"),
