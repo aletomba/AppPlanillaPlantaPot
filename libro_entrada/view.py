@@ -551,7 +551,7 @@ class LibroDeEntradaView:
 
         ttk.Label(self.dialog, text="Fecha Llegada (DD/MM/YYYY):").pack(pady=5)
         self.entry_fecha_llegada = ttk.Entry(self.dialog)
-        self.entry_fecha_llegada.insert(0, values[1])
+        self.entry_fecha_llegada.insert(0, libro.fecha_llegada.strftime("%d/%m/%Y") if libro.fecha_llegada else "")
         self.entry_fecha_llegada.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Fecha (DD/MM/YYYY):").pack(pady=5)
@@ -561,12 +561,12 @@ class LibroDeEntradaView:
 
         ttk.Label(self.dialog, text="Fecha Análisis (DD/MM/YYYY, opcional):").pack(pady=5)
         self.entry_fecha_analisis = ttk.Entry(self.dialog)
-        self.entry_fecha_analisis.insert(0, values[2])
+        self.entry_fecha_analisis.insert(0, libro.fecha_analisis.strftime("%d/%m/%Y") if libro.fecha_analisis else "")
         self.entry_fecha_analisis.pack(pady=5, fill=tk.X, padx=10)
 
         ttk.Label(self.dialog, text="Procedencia:").pack(pady=5)
         self.entry_procedencia = ttk.Entry(self.dialog)
-        self.entry_procedencia.insert(0, values[3])
+        self.entry_procedencia.insert(0, libro.procedencia or "")
         self.entry_procedencia.pack(pady=5, fill=tk.X, padx=10)
 
         # Sitio de extracción ahora se captura por muestra en su diálogo
