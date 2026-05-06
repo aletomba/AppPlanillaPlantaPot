@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 import os
 import tempfile
 import webbrowser
-from datetime import datetime, time
+from datetime import datetime
 from libro_entrada.dto import LibroDeEntradaDto, MuestraDto, TipoDeMuestraDto
 
 class LibroDeEntradaView:

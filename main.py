@@ -63,7 +63,7 @@ def main():
 
     root = ThemedTk(theme="arc")
     base_url = detect_base_url()
-    app = APIViewerApp(root, base_url=base_url)
+    APIViewerApp(root, base_url=base_url)
     root.mainloop()
 
 if __name__ == "__main__":

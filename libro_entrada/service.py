@@ -1,6 +1,6 @@
 import logging
 from data.api_data_acces import APIDataAccess
-from libro_entrada.dto import LibroDeEntradaDto, LibroDeEntradaResponseDto
+from libro_entrada.dto import LibroDeEntradaResponseDto
 from cliente.dto import ClienteDto
 
 logger = logging.getLogger(__name__)

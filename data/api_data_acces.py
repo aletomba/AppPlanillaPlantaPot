@@ -2,7 +2,6 @@ import logging
 import requests
 import urllib.parse
 import json
-import os
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +80,7 @@ class APIDataAccess:
         except requests.exceptions.RequestException as e:
             return None, f"Error al enviar datos: {e} (URL: {url})"
         except json.JSONDecodeError:
-            return None, f"La respuesta no es un JSON válido: {e.response.text} (URL: {url})"
+            return None, f"La respuesta no es un JSON válido: {response.text} (URL: {url})"
         except Exception as e:
             return None, f"Error inesperado: {e}"
 
@@ -109,7 +108,7 @@ class APIDataAccess:
         except requests.exceptions.RequestException as e:
             return None, f"Error al enviar datos: {e} (URL: {url})"
         except json.JSONDecodeError:
-            return None, f"La respuesta no es un JSON válido: {e.response.text} (URL: {url})"
+            return None, f"La respuesta no es un JSON válido: {response.text} (URL: {url})"
         except Exception as e:
             return None, f"Error inesperado: {e}"
 
@@ -135,7 +134,7 @@ class APIDataAccess:
         except requests.exceptions.RequestException as e:
             return None, f"Error al eliminar datos: {e} (URL: {url})"
         except json.JSONDecodeError:
-            return None, f"La respuesta no es un JSON válido: {e.response.text} (URL: {url})"
+            return None, f"La respuesta no es un JSON válido: {response.text} (URL: {url})"
         except Exception as e:
             return None, f"Error inesperado: {e}"
 

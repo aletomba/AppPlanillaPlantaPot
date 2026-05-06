@@ -1,6 +1,4 @@
-﻿import tkinter as tk
-from tkinter import ttk
-from libro_fisico.dto import FisicoQuimicoDto
+﻿from libro_fisico.dto import FisicoQuimicoDto
 from libro_fisico.report.fisico_quimico_report import FisicoQuimicoReport
 from shared.base_analisis_view import AnalisisViewBase
 

@@ -25,7 +25,7 @@ class FisicoQuimicoReport:
         doc = SimpleDocTemplate(ruta_archivo, pagesize=A4)
         elementos = [Paragraph("Reporte Fisicoquímico", estilos["Title"]), Spacer(1, 12)]
 
-        meta_keys = [
+        _ = [
             ("ID", "id"),
             ("Fecha", "fecha"),
             ("Fecha Llegada", "fecha_llegada"),

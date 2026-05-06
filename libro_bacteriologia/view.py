@@ -1,6 +1,3 @@
-import tkinter as tk
-from tkinter import ttk
-from datetime import datetime
 from libro_bacteriologia.dto import BacteriologiaDto
 from libro_bacteriologia.report.bacteriologia_report import BacteriologiaReport
 from shared.base_analisis_view import AnalisisViewBase

@@ -44,8 +44,7 @@ class MuestraDto:
         self.tipo_muestra = tipo_muestra
 
     def to_dict(self):
-        """Convierte a JSON para la API, con ticks para horaExtraccion."""
-        ticks = (self.hora_extraccion.hour * 3600 + self.hora_extraccion.minute * 60 + self.hora_extraccion.second) * 10_000_000
+        """Convierte a JSON para la API."""
         result = {
             "clienteId": self.cliente_id,
             "sitioExtraccion": self.sitio_extraccion,
