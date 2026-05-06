@@ -498,7 +498,6 @@ class LibroDeEntradaView:
 
         item = self.treeview.item(selected_item[0])
         libro_id = item["tags"][0]
-        values = item["values"]
 
         self.clientes, error = self.libro_service.get_clientes()
         if error:
