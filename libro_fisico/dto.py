@@ -1,6 +1,5 @@
 # --- FisicoQuimicoDto ---
 
-import datetime
 from typing import Optional
 from datetime import datetime
 

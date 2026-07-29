@@ -1,7 +1,5 @@
 from libro_fisico.dto import FisicoQuimicoDto
 from data.api_data_acces import APIDataAccess
-from tkinter.filedialog import FileDialog
-from libro_fisico.report.fisico_quimico_report import FisicoQuimicoReport
 
 class FisicoQuimicoService:
     def __init__(self, base_url):
