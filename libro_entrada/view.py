@@ -44,7 +44,7 @@ class LibroDeEntradaView:
         self.main_frame = ttk.Frame(self.frame)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        self.treeview = ttk.Treeview(self.main_frame, show="headings")
+        self.treeview = ttk.Treeview(self.main_frame, show="headings", selectmode="extended")
         self.treeview.pack(fill=tk.BOTH, expand=True)
 
         self.scroll_y = ttk.Scrollbar(self.main_frame, orient="vertical", command=self.treeview.yview)
@@ -74,6 +74,9 @@ class LibroDeEntradaView:
 
         self.btn_pdf = ttk.Button(self.btn_frame, text="Descargar PDF", command=self.download_pdf)
         self.btn_pdf.pack(side=tk.LEFT, padx=5)
+
+        self.btn_pdf_multiple = ttk.Button(self.btn_frame, text="PDF Múltiple", command=self.download_multiple_pdf)
+        self.btn_pdf_multiple.pack(side=tk.LEFT, padx=5)
 
         # Barra de paginación
         self.pagination_frame = ttk.Frame(self.frame)
@@ -662,6 +665,42 @@ class LibroDeEntradaView:
         libro_id = item["tags"][0]
 
         data, error = self.libro_service.get_libro_pdf(libro_id)
+        if error or not data:
+            messagebox.showerror("Error", error or "No se recibió PDF del servidor.")
+            return
+
+        try:
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+            tmp.write(data)
+            tmp.close()
+            if os.name == "nt":
+                os.startfile(tmp.name)
+            else:
+                webbrowser.open(tmp.name)
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo guardar/abrir el PDF: {e}")
+
+    def download_multiple_pdf(self):
+        selection = self.treeview.selection()
+        if not selection:
+            messagebox.showwarning("Advertencia", "Seleccione uno o más libros para generar el PDF múltiple.")
+            return
+
+        libro_ids = []
+        for item_id in selection:
+            item = self.treeview.item(item_id)
+            tags = item.get("tags", [])
+            if tags:
+                try:
+                    libro_ids.append(int(tags[0]))
+                except ValueError:
+                    continue
+
+        if not libro_ids:
+            messagebox.showwarning("Advertencia", "No se encontraron libros válidos en la selección.")
+            return
+
+        data, error = self.libro_service.get_reporte_multiple_pdf(libro_ids)
         if error or not data:
             messagebox.showerror("Error", error or "No se recibió PDF del servidor.")
             return
