@@ -72,6 +72,10 @@ class LibroDeEntradaService:
         # Se asume que el endpoint es /libroEntrada/{id}/pdf y devuelve application/pdf
         return self.data_access.get_binary(f"/libroEntrada/{libro_id}/reporte")
 
+    def get_reporte_multiple_pdf(self, libro_ids):
+        """Solicita el PDF múltiple para una lista de IDs de libros de entrada."""
+        return self.data_access.post_binary("/libroEntrada/reporte-multiple", {"libroIds": libro_ids})
+
     def get_by_fecha_rango(self, desde_str, hasta_str, page=1, page_size=30):
         """Busca libros de entrada entre dos fechas (formato 'YYYY-MM-DD')."""
         data, error = self.data_access.fetch_data(

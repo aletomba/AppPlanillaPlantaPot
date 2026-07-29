@@ -160,3 +160,27 @@ class APIDataAccess:
             return None, f"Error al obtener binario: {e} (URL: {url})"
         except Exception as e:
             return None, f"Error inesperado: {e}"
+
+    def post_binary(self, endpoint, data):
+        try:
+            url = f"{self.base_url}/{endpoint.lstrip('/')}"
+            headers = {"Content-Type": "application/json", "Accept": "application/pdf, application/octet-stream"}
+            logger.debug("JSON enviado a %s: %s", url, json.dumps(data, indent=2))
+            response = requests.post(url, json=data, headers=headers, timeout=30, verify=False)
+            response.raise_for_status()
+            return response.content, None
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            try:
+                error_detail = e.response.text
+            except:
+                error_detail = str(e)
+            return None, f"Error al obtener binario (HTTP {status_code}): {error_detail} (URL: {url})"
+        except requests.exceptions.ConnectionError:
+            return None, f"Error de conexión: No se pudo conectar al servidor (URL: {url})"
+        except requests.exceptions.Timeout:
+            return None, f"Error de tiempo de espera: La solicitud tardó demasiado (URL: {url})"
+        except requests.exceptions.RequestException as e:
+            return None, f"Error al obtener binario: {e} (URL: {url})"
+        except Exception as e:
+            return None, f"Error inesperado: {e}"
